@@ -1,0 +1,129 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DOW Software — Dawn of Worship | Mega Tag Enterprise</title>
+<style>
+:root{--g:#C9932E;--d:#1A1A1A;--s:#666;--w:#fff;--bg:#101010;--l:#2a2a2a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#eee;font:13px Helvetica,Arial,sans-serif;height:100vh;display:flex;flex-direction:column}
+header{background:var(--d);border-bottom:2px solid var(--g);padding:8px 16px;display:flex;align-items:center;gap:14px}
+header b{color:var(--w);letter-spacing:3px;font-size:15px}header i{color:var(--g);font-style:normal}header small{color:#999;margin-left:auto}
+main{flex:1;display:grid;grid-template-columns:290px 1fr 270px;gap:8px;padding:8px;min-height:0}
+section{background:var(--d);border:1px solid var(--l);border-radius:6px;padding:8px;overflow:auto;min-height:0}
+h4{margin:0 0 6px;color:var(--g);font-size:11px;letter-spacing:2px;text-transform:uppercase}
+button,select,input{background:#262626;color:#eee;border:1px solid #3a3a3a;border-radius:4px;padding:5px 8px;font:inherit}
+button{cursor:pointer}button:hover{border-color:var(--g)}button.go{background:var(--g);color:#000;font-weight:bold;border-color:var(--g)}
+.tabs{display:flex;gap:4px;margin-bottom:8px}.tabs button{flex:1}.tabs .on{background:var(--g);color:#000}
+.row{display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap}.row input{flex:1;min-width:0}
+.it{padding:5px 6px;border-bottom:1px solid var(--l);cursor:pointer;display:flex;justify-content:space-between;gap:6px}.it:hover{background:#242424}.it x{color:#888}.it x:hover{color:#e55}
+.mons{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mons label{color:#999;font-size:11px;letter-spacing:2px}.mons .live label{color:#e55}
+.scr{position:relative;aspect-ratio:16/9;background:#000;overflow:hidden;border:2px solid #333}.live .scr{border-color:#c33}
+.st{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;overflow:hidden}
+.bg,.dm,.sl,.bg>*{position:absolute;inset:0;width:100%;height:100%}.tx{position:absolute;inset:0}.bg>*{object-fit:cover;background-size:cover;background-position:center}.dm{background:#000;opacity:.3}
+.sl{display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff;line-height:1.25}.w{width:100%;font-weight:bold}.sl small{display:block;margin-top:.5em;font-size:.5em;color:var(--g)}
+.tx.sh .sl{text-shadow:0 3px 12px #000}.sl p{margin:0;white-space:pre-line}
+.ctl{display:flex;gap:6px;margin:8px 0;align-items:center;flex-wrap:wrap}
+.sls{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}.sc{background:#222;border:1px solid #333;border-radius:4px;padding:6px;height:76px;overflow:hidden;cursor:pointer;font-size:11px}.sc.on{border-color:var(--g)}.sc.lv{background:#3a1515;border-color:#c33}
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:6px}.mt{aspect-ratio:16/9;background:#000 center/cover;border:1px solid #333;cursor:pointer;position:relative;overflow:hidden;font-size:10px}.mt video,.mt img{width:100%;height:100%;object-fit:cover}.mt x{position:absolute;right:2px;top:0;color:#fff;text-shadow:0 0 3px #000}
+details{margin-top:10px}summary{cursor:pointer;color:var(--g);font-size:11px;letter-spacing:2px}.f{display:grid;grid-template-columns:1fr 1fr;gap:4px 8px;margin-top:6px}.f label{color:#aaa;font-size:11px}.f input,.f select{width:100%}
+body.out{background:#000;display:block}body.out .scr{position:fixed;inset:0;border:0;aspect-ratio:auto}body.out>:not(.scr){display:none}
+</style></head><body>
+<header><b>MEGA TAG <i>ENTERPRISE</i></b><span>|</span><span>DOW Software · Dawn of Worship</span><small>Quality Goods &amp; Services</small></header>
+<main>
+<section id="lib"><div class="tabs"></div><div id="pn"></div></section>
+<section><div class="mons"><div><label>PREVIEW</label><div class="scr" id="pv"></div></div><div class="live"><label>● LIVE</label><div class="scr" id="lv"></div></div></div>
+<div class="ctl"><button id="pr">◀ Prev</button><button id="nx">Next ▶</button><button class="go" id="tk">TAKE LIVE ⏎</button><button id="bl">Blank (B)</button>
+<select id="tr"><option>fade</option><option>slide</option><option>zoom</option><option>cut</option></select><label><input type="checkbox" id="au"> Auto-take</label><button id="op" style="margin-left:auto">🖥 Open Output</button></div>
+<h4>Slides <button id="ad" style="float:right;padding:1px 8px">＋ Dock</button></h4><div class="sls" id="sls"></div></section>
+<section><h4>Quick Dock</h4><div id="dk"></div>
+<details open><summary>DISPLAY SETTINGS</summary><div class="f" id="st"></div></details>
+<p style="color:#777;font-size:11px">Keys: ← → navigate · Enter take · B blank<br>Output window: double-click or F = fullscreen.<br>.pptx import: planned (v2).</p></section>
+</main>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const OUT=location.hash=='#out';if(OUT)document.body.className='out';
+// ---------- storage (IndexedDB: bibles, songs, media) ----------
+const db=new Promise(r=>{const q=indexedDB.open('dow',1);q.onupgradeneeded=()=>['bible','song','media'].forEach(s=>q.result.createObjectStore(s,{keyPath:'name'}));q.onsuccess=()=>r(q.result)});
+const tx=async(s,m,f)=>{const d=await db;return new Promise(r=>{const t=d.transaction(s,m),o=f(t.objectStore(s));t.oncomplete=()=>r(o.result)})};
+const put=(s,v)=>tx(s,'readwrite',o=>o.put(v)),all=s=>tx(s,'readonly',o=>o.getAll()),del=(s,k)=>tx(s,'readwrite',o=>o.delete(k));
+// ---------- screen renderer (used by preview, live and output window) ----------
+class Scr{constructor(h){this.h=h;h.innerHTML='<div class=st><div class=bg></div><div class=dm></div><div class=tx></div></div>';this.st=h.firstChild;[this.bg,this.dm,this.tx]=this.st.children;
+ new ResizeObserver(()=>{const w=h.clientWidth,H=h.clientHeight,k=Math.min(w/1920,H/1080);this.st.style.transform=`translate(${(w-1920*k)/2}px,${(H-1080*k)/2}px) scale(${k})`}).observe(h)}
+ cfg(s){this.s=s;const[t,r,b,l]=s.m;Object.assign(this.tx.style,{inset:`${t}% ${r}% ${b}% ${l}%`,fontFamily:s.ff,textAlign:s.al});this.tx.classList.toggle('sh',s.sh);this.dm.style.opacity=s.dim/100;this.tx.querySelectorAll('.sl').forEach(n=>this.fit(n))}
+ fit(n){let f=this.s.fs;n.style.fontSize=f+'px';const w=n.firstChild;while(w.offsetHeight>n.clientHeight&&f>24)n.style.fontSize=(f-=4)+'px'}
+ show(sl,tr='fade'){const old=[...this.tx.children];let n;if(sl){n=document.createElement('div');n.className='sl';n.innerHTML=`<div class=w><p>${esc(sl.text)}</p>${sl.ref&&this.s.ref?`<small>${esc(sl.ref)}</small>`:''}</div>`;this.tx.append(n);this.fit(n)}
+  const A={fade:[{opacity:0},{opacity:1}],slide:[{transform:'translateX(8%)',opacity:0},{transform:'none',opacity:1}],zoom:[{transform:'scale(.9)',opacity:0},{transform:'none',opacity:1}]};
+  if(tr=='cut'||!A[tr])return old.forEach(o=>o.remove());n&&n.animate(A[tr],{duration:500,easing:'ease-out'});old.forEach(o=>o.animate([{opacity:1},{opacity:0}],{duration:500}).onfinish=()=>o.remove())}
+ setBg(b){if((b?.u||'')==(this.cu||''))return;this.cu=b?.u;const old=[...this.bg.children];if(b){const e=document.createElement(b.k=='v'?'video':'div');if(b.k=='v')Object.assign(e,{src:b.u,loop:true,muted:true,autoplay:true,playsInline:true});else e.style.backgroundImage=`url("${b.u}")`;this.bg.append(e);e.animate([{opacity:0},{opacity:1}],{duration:600})}
+  old.forEach(o=>o.animate([{opacity:1},{opacity:0}],{duration:600}).onfinish=()=>o.remove())}}
+// ---------- settings ----------
+const D={m:[6,6,6,6],fs:72,dim:30,ff:'Helvetica,Arial,sans-serif',al:'center',sh:true,ref:true,tr:'fade'};
+let S={...D,...JSON.parse(localStorage.getItem('dow.s')||'{}')};
+// ---------- OUTPUT WINDOW ----------
+if(OUT){const o=new Scr(document.body.appendChild(Object.assign(document.createElement('div'),{className:'scr'})));o.cfg(S);
+ addEventListener('message',e=>{const d=e.data||{};if(d.s){S=d.s;o.cfg(S)}if('bg'in d)o.setBg(d.bg);if('sl'in d)o.show(d.sl,d.tr)});
+ const fs=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();addEventListener('dblclick',fs);addEventListener('keydown',e=>e.key=='f'&&fs());opener?.postMessage({ready:1},'*')}
+else{
+// ---------- OPERATOR ----------
+const P=new Scr($('#pv')),L=new Scr($('#lv'));let win=null,bibles={},songs={},media={},slides=[],idx=-1,cur=null,tab='Bible',ver='',dock=JSON.parse(localStorage.getItem('dow.d')||'[]');
+const pv={sl:null,bg:null},lv={sl:null,bg:null};
+const send=m=>{try{win&&!win.closed&&win.postMessage(m,'*')}catch(e){}};
+addEventListener('message',e=>{if(e.data?.ready)send({s:S,sl:lv.sl,bg:lv.bg,tr:'cut'})});
+const url=m=>m.u||(m.u=URL.createObjectURL(m.blob));
+const applyS=()=>{localStorage.setItem('dow.s',JSON.stringify(S));P.cfg(S);L.cfg(S);send({s:S})};
+function take(){if(!pv.sl&&!pv.bg)return;lv.sl=pv.sl;lv.bg=pv.bg;L.setBg(lv.bg);L.show(lv.sl,S.tr);send({bg:lv.bg,sl:lv.sl,tr:S.tr});draw()}
+function pick(i){if(i<0||i>=slides.length)return;idx=i;pv.sl=slides[i];P.show(pv.sl,'cut');$('#au').checked?take():draw()}
+function blank(){lv.sl=null;L.show(null,S.tr);send({sl:null,tr:S.tr});draw()}
+function load(sl,c){slides=sl;cur=c;pick(0)}
+function draw(){$('#sls').innerHTML=slides.map((s,i)=>`<div class="sc ${i==idx?'on':''} ${lv.sl===s?'lv':''}" data-i="${i}">${esc(s.text)}</div>`).join('')||'<span style="color:#777">Load a verse or song…</span>';
+ $('#dk').innerHTML=dock.map((d,i)=>`<div class=it data-d="${i}"><span>${d.t=='b'?'📖':'♪'} ${esc(d.label)}</span><x data-x="${i}">✕</x></div>`).join('')||'<span style="color:#777">Empty — load something and press ＋ Dock</span>'}
+// Bible
+const nz=s=>s.toLowerCase().replace(/[^a-z0-9]/g,'');
+function bible(q,v=ver){const B=bibles[v];if(!B)return alert('Import a Bible first.');const m=q.trim().match(/^(.+?)\s*(\d+)(?:\s*:\s*(\d+)(?:\s*-\s*(\d+))?)?$/);if(!m)return alert('Try e.g. John 3:16-18');
+ const ks=Object.keys(B),n=nz(m[1]),bk=ks.find(k=>nz(k)==n)||ks.find(k=>nz(k).startsWith(n));if(!bk)return alert('Book not found');const ch=B[bk][m[2]];if(!ch)return alert('Chapter not found');
+ const vs=Object.keys(ch).map(Number).sort((a,b)=>a-b),a=m[3]?+m[3]:null,z=m[4]?+m[4]:a,fx=t=>t.replace(/([,:])"(?=[A-Za-z])/g,'$1 "'),R=(x,y)=>`${bk} ${m[2]}:${x}${y!=x?'-'+y:''} (${v})`;let out=[];
+ if(a===null)out=vs.map(x=>({text:fx(ch[x]),ref:R(x,x)}));else{let buf=[],len=0;const fl=()=>{if(buf.length)out.push({text:buf.map(x=>fx(ch[x])).join(' '),ref:R(buf[0],buf.at(-1))});buf=[];len=0};
+  vs.filter(x=>x>=a&&x<=z).forEach(x=>{if(len+ch[x].length>280)fl();buf.push(x);len+=ch[x].length});fl()}
+ if(!out.length)return alert('Verse not found');load(out,{t:'b',v,ref:q,label:`${bk} ${m[2]}${a?':'+a+(z!=a?'-'+z:''):''} (${v})`})}
+// Songs
+function song(n){const s=songs[n];if(s)load(s.text.replace(/\r/g,'').trim().split(/\n\s*\n/).map(t=>({text:t.trim(),ref:''})),{t:'s',name:n,label:n})}
+// Library panels
+function panel(){const p=$('#pn');$('.tabs').innerHTML=['Bible','Songs','Media'].map(t=>`<button class="${t==tab?'on':''}" data-t="${t}">${t}</button>`).join('');
+ if(tab=='Bible'){const vk=Object.keys(bibles);
+  if(!vk.length){p.innerHTML=`<div class=row><button onclick="$('#bf').click()">Import Bible .json</button><input id=bf type=file accept=".json" hidden></div><small style="color:#888">No Bible version loaded yet — import one to begin.</small>`;
+   $('#bf').onchange=async e=>{for(const f of e.target.files){const d=JSON.parse(await f.text());await put('bible',{name:f.name.replace(/\.json$/i,'').toUpperCase(),data:d})}await boot()};return}
+  p.innerHTML=`<div class=row><select id=bv style="flex:1">${vk.map(v=>`<option ${v==ver?'selected':''}>${esc(v)}</option>`).join('')}</select><button onclick="$('#bf').click()">Import .json</button><input id=bf type=file accept=".json" hidden></div>
+  <div class=row><select id=bb style="flex:2"></select><select id=bc style="width:66px"></select></div>
+  <div class=row><input id=bva type=number min=1 placeholder="verse a" style="width:0;flex:1"><span style="align-self:center;color:#999">to</span><input id=bvb type=number min=1 placeholder="verse b" style="width:0;flex:1"></div>
+  <div class=row><button class=go id=gb style="flex:1">Go</button></div>
+  <small style="color:#888">Leave "verse a" blank for the whole chapter. Fill only "a" for a single verse. Ranges auto-split into slides.</small>`;
+  const OT=new Set(['genesis','exodus','leviticus','numbers','deuteronomy','joshua','judges','ruth','1samuel','2samuel','1kings','2kings','1chronicles','2chronicles','ezra','nehemiah','esther','job','psalms','psalm','proverbs','ecclesiastes','songofsolomon','songofsongs','isaiah','jeremiah','lamentations','ezekiel','daniel','hosea','joel','amos','obadiah','jonah','micah','nahum','habakkuk','zephaniah','haggai','zechariah','malachi']);
+  const fillBooks=()=>{const B=bibles[ver]||{},ks=Object.keys(B),ot=ks.filter(k=>OT.has(nz(k))),nt=ks.filter(k=>!OT.has(nz(k))),opt=a=>a.map(k=>`<option>${esc(k)}</option>`).join('');
+   $('#bb').innerHTML=(ot.length?`<optgroup label="Old Testament">${opt(ot)}</optgroup>`:'')+(nt.length?`<optgroup label="New Testament">${opt(nt)}</optgroup>`:'')||opt(ks);fillChapters()};
+  const fillChapters=()=>{const B=bibles[ver]||{},bk=$('#bb').value,ch=B[bk]?Object.keys(B[bk]).map(Number).sort((a,b)=>a-b):[];$('#bc').innerHTML=ch.map(c=>`<option>${c}</option>`).join('')};
+  fillBooks();$('#bf').onchange=async e=>{for(const f of e.target.files){const d=JSON.parse(await f.text());await put('bible',{name:f.name.replace(/\.json$/i,'').toUpperCase(),data:d})}await boot()};
+  $('#bv').onchange=e=>{ver=e.target.value;fillBooks()};$('#bb').onchange=fillChapters;
+  const go=()=>{const bk=$('#bb').value,c=$('#bc').value,a=$('#bva').value.trim(),z=$('#bvb').value.trim();if(!bk||!c)return;bible(`${bk} ${c}${a?':'+a+(z&&z!=a?'-'+z:''):''}`)};
+  $('#gb').onclick=go;[$('#bva'),$('#bvb')].forEach(i=>{i.onkeydown=e=>{if(e.key=='Enter')go()}})}
+ else if(tab=='Songs'){p.innerHTML=`<div class=row><input id=sq placeholder="Search songs"><button onclick="$('#sf').click()">Import .txt</button><input id=sf type=file accept=".txt" multiple hidden></div><div id=sl></div><small style="color:#888">Separate slides with a blank line.</small>`;
+  const ls=()=>{$('#sl').innerHTML=Object.keys(songs).filter(n=>n.toLowerCase().includes($('#sq').value.toLowerCase())).sort().map(n=>`<div class=it data-s="${esc(n)}"><span>♪ ${esc(n)}</span><x data-ds="${esc(n)}">✕</x></div>`).join('')};ls();$('#sq').oninput=ls;
+  $('#sf').onchange=async e=>{for(const f of e.target.files)await put('song',{name:f.name.replace(/\.txt$/i,''),text:await f.text()});await boot()}}
+ else{p.innerHTML=`<div class=row><select id=ma><option>Both</option><option>Preview</option><option>Live</option></select><button onclick="$('#mf').click()">Import</button><input id=mf type=file accept=".jpg,.jpeg,.png,.mp4,.webm,.wmv" multiple hidden></div><div class=mg><div class=mt data-m="" style="display:grid;place-items:center">None</div>${Object.values(media).map(m=>`<div class=mt data-m="${esc(m.name)}">${m.k=='v'?`<video src="${url(m)}" muted preload=metadata></video>`:`<img src="${url(m)}">`}<x data-dm="${esc(m.name)}">✕</x></div>`).join('')}</div><small style="color:#888">Note: browsers can't play .wmv reliably — convert to .mp4.</small>`;
+  $('#mf').onchange=async e=>{for(const f of e.target.files)await put('media',{name:f.name,blob:f,k:/video|wmv/.test(f.type)||/\.(mp4|webm|wmv)$/i.test(f.name)?'v':'i'});await boot()}}}
+async function boot(){bibles={};(await all('bible')).forEach(b=>bibles[b.name]=b.data);
+ if(!Object.keys(bibles).length){try{const r=await fetch('niv.json');if(r.ok){const d=await r.json();await put('bible',{name:'NIV',data:d});bibles.NIV=d}}catch(e){}}
+ songs={};(await all('song')).forEach(s=>songs[s.name]=s);media={};(await all('media')).forEach(m=>media[m.name]=m);if(!bibles[ver])ver=Object.keys(bibles)[0]||'';panel();draw()}
+// events
+document.addEventListener('click',e=>{const t=e.target,g=a=>t.closest(`[${a}]`)?.getAttribute(a);
+ if(g('data-t')){tab=g('data-t');panel()}else if(t.dataset.ds){del('song',t.dataset.ds).then(boot)}else if(g('data-s')!==null&&g('data-s')!==undefined)song(g('data-s'));
+ else if(t.dataset.dm){del('media',t.dataset.dm).then(boot)}else if(g('data-m')!==null&&g('data-m')!==undefined){const m=media[g('data-m')],b=m?{u:url(m),k:m.k}:null,w=$('#ma').value;if(w!='Live'){pv.bg=b;P.setBg(b)}if(w!='Preview'){lv.bg=b;L.setBg(b);send({bg:b})}}
+ else if(g('data-i')!==null&&g('data-i')!==undefined)pick(+g('data-i'));else if(t.dataset.x){dock.splice(+t.dataset.x,1);sv()}else if(g('data-d')!==null&&g('data-d')!==undefined){const d=dock[+g('data-d')];d.t=='b'?bible(d.ref,d.v):song(d.name)}});
+const sv=()=>{localStorage.setItem('dow.d',JSON.stringify(dock));draw()};
+$('#ad').onclick=()=>{if(cur){dock.push(cur);sv()}};$('#tk').onclick=take;$('#bl').onclick=blank;$('#pr').onclick=()=>pick(idx-1);$('#nx').onclick=()=>pick(idx+1);
+$('#tr').value=S.tr;$('#tr').onchange=e=>{S.tr=e.target.value;applyS()};
+addEventListener('keydown',e=>{if(/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;if(e.key=='ArrowRight')pick(idx+1);if(e.key=='ArrowLeft')pick(idx-1);if(e.key=='Enter')take();if(e.key=='b'||e.key=='B')blank()});
+$('#op').onclick=async()=>{let f='popup=yes,width=1280,height=720';try{const d=await getScreenDetails(),s=d.screens.find(x=>!x.isPrimary)||d.screens[0];f=`popup=yes,left=${s.availLeft},top=${s.availTop},width=${s.availWidth},height=${s.availHeight}`}catch(e){}
+ win=open(location.pathname+'#out','dow-out',f);if(win)setTimeout(()=>send({s:S,sl:lv.sl,bg:lv.bg,tr:'cut'}),800)};
+// settings form
+const F=[['Top %','m0',0,40],['Right %','m1',0,40],['Bottom %','m2',0,40],['Left %','m3',0,40],['Font px','fs',24,160],['Dim bg %','dim',0,90]];
+$('#st').innerHTML=F.map(([l,k,a,b])=>`<label>${l}<input type=number data-k=${k} min=${a} max=${b}></label>`).join('')+`<label>Align<select data-k=al><option value=left>Left</option><option value=right>Right</option><option value=center>Centred</option><option value=justify>Justified</option></select></label><label>Font<select data-k=ff><option value="Helvetica,Arial,sans-serif">Helvetica/Arial</option><option value="Georgia,serif">Georgia</option><option value="'Trebuchet MS',sans-serif">Trebuchet</option></select></label><label><input type=checkbox data-k=sh> Shadow</label><label><input type=checkbox data-k=ref> Show ref</label>`;
+document.querySelectorAll('[data-k]').forEach(i=>{const k=i.dataset.k,mm=k[0]=='m'&&k.length==2,g=()=>mm?S.m[k[1]]:S[k];i.type=='checkbox'?i.checked=g():i.value=g();
+ i.oninput=()=>{const v=i.type=='checkbox'?i.checked:i.type=='number'?+i.value:i.value;mm?S.m[k[1]]=v:S[k]=v;applyS()}});
+P.cfg(S);L.cfg(S);boot()}
+</script></body></html>
