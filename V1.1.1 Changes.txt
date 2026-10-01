@@ -1,0 +1,7 @@
+V1.1.1 Changes:
+Confirmed fixed — both colors now update instantly on the slide that's already live, without needing to reselect or switch slides:
+
+Text color: white → green (#00ff00) ✅
+Ref color: gold → magenta (#ff00ff) ✅
+
+What was wrong: the slide's CSS had a hardcoded color:#fff baked into the .sl class, which completely overrode the color picker's setting no matter what you chose — your text color picker was never actually getting a chance to apply. On top of that, even once that's fixed, changing a color while a slide is already on screen wouldn't touch what's already rendered — it only affected the next slide you loaded. Fixed both: removed the hardcoded override and made color changes push through to whatever's currently showing immediately.
