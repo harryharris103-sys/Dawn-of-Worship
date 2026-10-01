@@ -1,0 +1,4 @@
+V1.1.0 Changes
+Repair of .pptx compatibility.
+Enhanced compatibility of other .json bible versions
+Ability to access suitable files in the GitHub repo
