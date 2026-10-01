@@ -1,0 +1,7 @@
+V1.0 Changes:
+- Template-saving system
+- Ability to import new fonts
+- Ability to change font colors
+- Allow the importation of PowerPoint files (.pptx), which can be projected
+- Toggling between dark and normal mode
+- Addition of version numbers for reference
