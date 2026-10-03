@@ -1,0 +1,17 @@
+3 distinct changes: a distinct, stable window title for OBS to target, automatic fullscreen on open (removing the title bar), with a graceful fallback hint if the browser blocks it.
+
+Confirmed working correctly:
+
+Window title: DOW Software — OUTPUT — stable and distinctive, ready to target in OBS
+Auto-fullscreen attempt: runs immediately on load; when the browser blocks it (as it will in most real cases without a direct click already on the output window itself), the fallback hint correctly appears: "Press F or double-click to go fullscreen"
+Manual fallback: still works — double-click reliably triggers fullscreen
+
+Here's what changed, and one honest limitation worth knowing upfront:
+
+What's fixed:
+
+No more title bar — the output window now tries to go fullscreen the instant it opens. If your browser allows it (common when "Open Output" is a direct click), the title bar disappears immediately with zero extra steps. If the browser blocks the auto-attempt (some browsers require you to interact with the new window itself first), you'll briefly see a small on-screen hint — just press F or double-click, and it still goes fullscreen instantly.
+Identifiable to OBS — the output window now always carries a fixed, distinctive title: "DOW Software — OUTPUT". That makes it easy to find and select by name in OBS's source list.
+
+The one thing I can't fake: a browser tab or window can't turn itself into an actual OS-level second monitor — that's hardware/OS territory, not something any web page can create. What I can do (and already does, via "Open Output"): if you genuinely have a second monitor or projector plugged in, it auto-detects it and fills that screen completely. At that point, OBS's Display Capture naturally picks it up as that physical screen, since our content fills it edge-to-edge. If you're running single-monitor (e.g., streaming off one laptop screen), there's no real "second display" for Display Capture to grab — in that case, Window Capture targeting "DOW Software — OUTPUT" by name is the correct and reliable approach, and that's exactly what the new stable title is for.
+
