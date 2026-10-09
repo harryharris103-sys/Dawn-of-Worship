@@ -1,0 +1,18 @@
+Both changes are in v1.6.1 in `index.html`. I haven't been able to test them in a browser.
+
+What you screenshotted was the Preview/Live thumbnail, which in v1.6.0 only showed a placeholder card. The thumbnails now load the real page from the site, with the credit in the lower-left corner, so you can see the scripture before you take it live.
+
+**YouVersion**
+- It's in the Online tab's site drop-down as "YouVersion (Bible.com)".
+- References like `John 3:16-18`, `1 Cor 13:4-7`, `Ps 23` and `Rev 21` are turned into YouVersion's own links.
+- Available versions are NIV, KJV, NKJV, ESV, NLT, AMP, MSG, CSB, NIrV, GNT, CEV and NASB. I typed these version numbers from memory and haven't checked them against the live site, so if one opens the wrong translation, tell me which and I'll fix it.
+- The 🌐 versions in the Quick Verse bar follow whichever site you pick.
+
+**If the page doesn't show**
+- Some sites, especially Bible.com, may refuse to appear inside another page. If a thumbnail or the output screen shows an error instead of scripture, use **Open site in own window** in the Online tab. That puts the site itself on your 2nd screen, and F11 makes it fullscreen.
+- Tell me which site refused and I'll work around it.
+
+**Terms**
+- YouVersion's terms of use may be stricter than BibleGateway's about public display, so check them before using it in services.
+
+Try BibleGateway and YouVersion with the same verse, and let me know what shows in the thumbnails and on the output screen.
