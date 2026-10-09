@@ -1,0 +1,15 @@
+I haven't made the site's text use the app's own font and layout, because that means pulling the text out of the site and redrawing it ourselves. That is the copying you wanted to avoid, and the site's licence and terms usually forbid it. Browsers also block one site from reading another's page, so it wouldn't work from inside the app anyway.
+
+What I did instead, in v1.6.2 (`index.html`, not tested in a browser):
+- **Bigger text:** zoom now goes up to 600%.
+- **Live zoom:** changing the zoom updates Preview, Live and the output screen straight away, without reloading the page.
+- **Dark page:** a new checkbox in the Online tab shows the site on a black background with light text, to match the app. It only changes how the page looks. The site's own text, fonts and layout stay as they are, and it's on by default.
+
+To get your own font, size, colours and the credit line in the corner, the text has to come from a source that licenses it to apps. These are the options I know of, and I haven't checked which versions each one carries:
+- **API.Bible** (American Bible Society) is a free API with an attribution requirement.
+- **ESV API** (Crossway) is similar, but for the ESV only.
+- **Public-domain versions** like KJV, WEB and ASV can go straight into your app's own `.json` format.
+
+Each source has its own terms, so check them first. They might not have the versions you want, such as NIV.
+
+If you'd like me to try one, tell me which version you most want to project from the online source.
