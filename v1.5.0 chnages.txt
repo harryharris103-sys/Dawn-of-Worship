@@ -1,0 +1,14 @@
+I've read the app's rendering and media code. Now I'm checking how the settings panel and keyboard shortcuts are wired before adding the fit modes and image/video-only projection.I've updated `index.html` to DOW Software v1.5.0 with stretch-to-fit and image/video-only projection. I haven't opened it in a browser, only checked that the script parses, so try it on your projector first.
+
+**Stretching to fit the display**
+- DISPLAY SETTINGS has a new **Media fit** option with three choices: Fill (crop to fit), Fit (show everything with black bars) and Stretch (distort to fill exactly).
+- It applies to background images and videos, and to media projected on their own.
+- A **Media fills whole display** checkbox makes backgrounds and media cover the entire output screen, even if the projector isn't 16:9. Text stays inside the normal 16:9 area.
+
+**Projecting images or videos only**
+- On the Media tab, a new dropdown next to Both/Preview/Live lets you pick **As background** or **Project only (full screen)**.
+- In project-only mode, clicking an image or video shows it full screen on its own, with no text and no dimming, in Preview, Live or both. The "None" tile clears it.
+- Videos have two new checkboxes, **Loop videos** and **Video sound (output)**, and Space plays or pauses the live video.
+- Sound plays only on the output window, so you don't hear it twice. If the browser blocks sound at first, click the output window once.
+
+Your own PowerPoint slides keep their original layout, and the existing text, Bible and song slides work as before.
