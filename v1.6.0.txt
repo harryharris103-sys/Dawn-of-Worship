@@ -1,0 +1,16 @@
+How it works
+
+There’s a new Online tab. BibleGateway.com is built in, and you can also paste the address of any other site that takes a reference in its link.
+Type a reference such as John 3:16-18, pick a version (NIV, NKJV, ESV, NLT, NASB and others), and press Preview or ⚡.
+The output screen shows the real website page, with a credit in the lower-left corner: “Scripture shown live from biblegateway.com · NIV”.
+The app doesn’t copy, store or retype any of the site’s text. I did it this way on purpose, since displaying the site itself is a different matter from copying its text into the app.
+The Quick Verse bar’s version drop-down now has 🌐 online versions, so Shift+Enter works the same as for your own versions. Online verses can also be saved to the Quick Dock.
+The Preview and Live thumbnails show a placeholder, and the real page loads only on the output screen.
+A “Text zoom” setting (default 200%) and a “Clean print layout” option make the passage readable from the back of the church.
+
+Things to know
+
+Some sites may refuse to appear inside the output window. I couldn’t check this from here. If the output screen shows a “refused to connect” message, use Open site in own window. That puts the site itself on your 2nd screen, and F11 makes it fullscreen.
+Scrolling is manual. The app can’t control the site’s page from outside. Keep passages short or zoomed out, or scroll the output window by hand.
+Clicking inside the page doesn’t make it fullscreen. Use the “Click here” hint at the bottom of the output window, or press F.
+Check the site’s terms. Not copying the text is the safer approach, but sites differ on public display, so check the terms (or ask the site) before using it in services. I’m not a lawyer.
