@@ -1,0 +1,27 @@
+I'm adding a service worker, manifest and offline badge, then testing it with the network off.Icon looks right. Now patching `index.html` (registration, offline badge, manifest link, version bump to v1.7.0):Now a real test — a local web server (service workers need http), then go offline and reload:All core checks pass. Two more scenarios that matter on real hosting — GitHub Pages' `/repo/` subfolder, and a hanging network (bad church Wi-Fi):That hung because my test's slow-network simulation blocked the browser driver itself — a test problem, not an app problem. Redoing it in smaller pieces with the delay on the server side:My own `pkill` pattern matched and killed the shell running it, so the fixed test script never got written and the old one ran. Cleaning up properly and rerunning:Nothing left over. Running the test now (without any self-matching kill commands):Both pass. Last check — opening the file straight from disk (no hosting) must still work normally, with a clear badge instead of errors:Offline caching is in as **v1.7.0**, built on your uploaded v1.6.2 (not my older copy). I tested it in a browser with the network switched off and the app reloaded and ran normally.
+
+**New files in the same GitHub folder as `index.html`:**
+- `index.html` (updated)
+- `sw.js`
+- `manifest.webmanifest`
+- `icon-192.png`
+- `icon-512.png`
+
+The `sw.js` file is what makes the offline copy work, and it has to sit beside `index.html`. Open the app once online after uploading, and it saves itself.
+
+**What now works offline:**
+- **The app itself:** it opens with no internet, including when the output window is opened.
+- **PPTX import:** the unzip library it needs is now saved, so PPTX works offline too. Before, it needed internet every visit.
+- **Your content:** Bibles, songs, media, PPTX decks, fonts and templates were already stored in the browser, so they were available offline all along.
+- **Updates:** when online, the app loads the newest version first. If the connection hangs (I simulated this), it falls back to the saved copy after 3 seconds.
+
+**New things you'll see:**
+- **Header badge:** it reads `⚡ Offline-ready`, `📴 Offline`, or `… Saving offline copy`. Hover for details, and click it to refresh the saved copy. Your songs and Bibles are not touched by that refresh.
+- **Storage protection:** the app now asks the browser not to auto-clear its stored data when the disk runs low. In my test the browser did not grant this, so the badge hover text will tell you whether it did on your machine.
+- **Install as an app:** in Chrome or Edge you can install it from the address bar. It then opens in its own window without tabs.
+
+**Limits:**
+- **Opening from disk:** offline caching only works from the web address, such as GitHub Pages. Opening `index.html` as a file on your computer shows `○ No offline copy`, and everything else works as before.
+- **Needs internet by nature:** the Online Bible tab and the GitHub sync.
+- **First visit:** you must open the hosted app once while online so it can save itself.
+
