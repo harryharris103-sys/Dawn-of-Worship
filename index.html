@@ -14,7 +14,7 @@
            (positioned text boxes with their own size/colour/bold, plus embedded images and
            slide background) instead of just extracted text. Added GitHub-folder auto-sync
            (🔄 button, header) that lists the repo folder via the GitHub API and imports any
-           new .json Bibles, images/video, .pptx decks and .txt lyric files it finds —
+           new .json Bibles, images/video, .pptx decks and .txt/.xml lyric files it finds —
            runs automatically once per load and skips anything already imported.
   v1.1.1 — Fixed: Text colour picker had no effect (a hardcoded white was baked into the
            slide CSS, overriding it). Text and ref colour changes now also apply instantly
@@ -109,9 +109,14 @@
            holds both (e.g. niv.ewb and niv.json) only the .ewb is used, and an .ewb found on 🔄
            replaces a version that was loaded earlier from a .json (including the auto-loaded
            niv.json). On first launch niv.ewb is tried before niv.json.
+  v1.9.2 — Songs can now be imported from .xml files as well as .txt. The Songs tab's Import button
+           (several files at once) and the GitHub folder sync (🔄) both accept them. Supports the
+           OpenLyrics format (what OpenLP exports): the song title comes from the file, each verse
+           becomes a slide, line breaks are kept, and the file's verse order is followed. Simple
+           OpenSong-style .xml is read too. Files that aren't song lyrics are reported, not imported.
   Bump DOW_VERSION below and add a new line here whenever a change ships.
 -->
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#1A1A1A"><title>DOW Software v1.9.1 — Dawn of Worship | Mega Tag Enterprise</title>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#1A1A1A"><title>DOW Software v1.9.2 — Dawn of Worship | Mega Tag Enterprise</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous"></script>
 <style>
 :root{--g:#C9932E;--d:#1A1A1A;--s:#666;--w:#fff;--bg:#101010;--l:#2a2a2a;--fg:#eee;--btn:#262626;--btnb:#3a3a3a}
@@ -164,7 +169,52 @@ body.out{background:#000;display:block}body.out .scr{position:fixed;inset:0;bord
 <p style="color:#777;font-size:11px">Keys: ← → navigate · Enter take · B blank · O open output · D auto-take · / or Ctrl+K quick verse<br>Quick verse: Enter = preview · Shift+Enter = straight to the output screen · ↑ ↓ change slide (Shift = live)<br>Output window: opens on the 2nd screen automatically. If it isn&#39;t fullscreen yet, click it once (or press F).</p></section>
 </main>
 <script>
-const DOW_VERSION='1.9.1';
+const DOW_VERSION='1.9.2';
+// ---- song files: .txt (as-is) and .xml (OpenLyrics from OpenLP; basic OpenSong too) -> lyric text, blank line = new slide
+function decodeText(buf){const u=new Uint8Array(buf);let enc='utf-8';
+ if(u[0]===0xFF&&u[1]===0xFE)enc='utf-16le';else if(u[0]===0xFE&&u[1]===0xFF)enc='utf-16be';
+ else{const m=new TextDecoder('latin1').decode(u.slice(0,200)).match(/<\?xml[^>]*encoding\s*=\s*["']([\w.:-]+)["']/i);if(m)enc=m[1]}
+ let t;try{t=new TextDecoder(enc).decode(u)}catch(e){t=new TextDecoder('utf-8').decode(u)}
+ return t.replace(/^\uFEFF/,'')}
+function xmlSong(xml,fallback){
+ const doc=new DOMParser().parseFromString(xml,'application/xml');
+ if(doc.getElementsByTagName('parsererror').length)throw new Error('not valid XML');
+ const root=doc.documentElement;if(!root||!/^song$/i.test(root.localName))throw new Error('not a song file');
+ const A=(el,n)=>[...el.getElementsByTagNameNS('*',n)];
+ const flat=n=>String(n||'').replace(/\s+/g,' ').trim();
+ const lt=n=>{let t='';for(const c of n.childNodes){if(c.nodeType===3||c.nodeType===4)t+=c.nodeValue.replace(/\s+/g,' ');
+   else if(c.nodeType===1){const g=c.localName.toLowerCase();if(g==='br')t+='\n';else if(g!=='chord'&&g!=='comment')t+=lt(c)}}return t};
+ const block=n=>lt(n).split('\n').map(x=>x.trim()).filter(Boolean).join('\n');
+ const tt=A(root,'title')[0];
+ const name=flat(tt&&tt.textContent).replace(/[\s,;:]+$/,'')||fallback;
+ const lyr=A(root,'lyrics')[0];if(!lyr)throw new Error('no lyrics found');
+ let verses=A(lyr,'verse').map(v=>({name:v.getAttribute('name')||'',lang:v.getAttribute('lang')||'',
+   slides:A(v,'lines').map(block).filter(Boolean)})).filter(v=>v.slides.length);
+ const slides=[];
+ if(verses.length){                                   // OpenLyrics
+  const langs=[...new Set(verses.map(v=>v.lang).filter(Boolean))];
+  if(langs.length>1)verses=verses.filter(v=>!v.lang||v.lang===langs[0]);   // bilingual file: first language only
+  const ord=A(root,'verseOrder')[0],toks=ord?flat(ord.textContent).split(' ').filter(Boolean):[];
+  let seq=[];
+  for(const t of toks)seq.push(...verses.filter(v=>v.name===t||(v.name.startsWith(t)&&/^[a-z]$/i.test(v.name.slice(t.length)))));
+  if(!seq.length)seq=verses;
+  seq.forEach(v=>slides.push(...v.slides));
+ }else{                                               // OpenSong-style: [V1] headers, ".chord" lines, blank line = slide
+  let cur=[];const flush=()=>{if(cur.length)slides.push(cur.join('\n'));cur=[]};
+  for(const ln of String(lyr.textContent).replace(/\r/g,'').split('\n')){
+   if(/^\s*\[.*\]\s*$/.test(ln)||/^\s*$/.test(ln)){flush();continue}
+   if(ln[0]==='.')continue;
+   cur.push(ln.replace(/^ /,'').replace(/\|+/g,' ').trimEnd())}
+  flush()}
+ const text=slides.join('\n\n').trim();if(!text)throw new Error('no lyrics found');
+ return{name,text}}
+async function importSongFiles(files){const bad=[];
+ for(const f of files){try{
+   if(/\.xml$/i.test(f.name)){const s=xmlSong(decodeText(await f.arrayBuffer()),f.name.replace(/\.xml$/i,''));await put('song',{name:s.name,text:s.text,file:f.name})}
+   else await put('song',{name:f.name.replace(/\.txt$/i,''),text:await f.text()})
+  }catch(e){bad.push(f.name+' — '+e.message)}}
+ await boot();if(bad.length)alert('Could not import:\n'+bad.join('\n'))}
+
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 {const b=document.getElementById('verbadge');if(b)b.textContent='v'+DOW_VERSION}
 const OUT=location.hash=='#out';if(OUT)document.body.className='out';
@@ -651,10 +701,10 @@ function panel(){const p=$('#pn');$('.tabs').innerHTML=['Bible','Songs','Media',
    $('#sdl').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([$('#stx').value.replace(/\r/g,'').trim()+'\n'],{type:'text/plain'}));a.download=($('#sn').value.trim()||'song')+'.txt';a.click()};
    $('#scn').onclick=()=>{const o=songs[E.orig],dirty=(E.text||'').trim()!==(o?o.text:'').trim();if(dirty&&!confirm('Discard the unsaved lyrics?'))return;localStorage.removeItem('dow.draft');editing=null;panel()};
    (E.name?$('#stx'):$('#sn')).focus();return}
-  p.innerHTML=`<div class=row><input id=sq placeholder="Search songs"><button class=go id=snw title="Type lyrics from scratch">＋ New</button><button onclick="$('#sf').click()">Import .txt</button><input id=sf type=file accept=".txt" multiple hidden></div><div id=sl></div><small style="color:#888">Separate slides with a blank line. ＋ New lets you type lyrics from scratch; ✎ edits a saved song.</small>`;
-  const ls=()=>{$('#sl').innerHTML=Object.keys(songs).filter(n=>n.toLowerCase().includes($('#sq').value.toLowerCase())).sort().map(n=>`<div class=it data-s="${esc(n)}"><span>♪ ${esc(n)}</span><span class=acts><x class=ed data-es="${esc(n)}" title="Edit lyrics">✎</x><x data-ds="${esc(n)}" title="Delete">✕</x></span></div>`).join('')||'<span style="color:#777">No songs yet — press ＋ New to type one, or Import .txt.</span>'};ls();$('#sq').oninput=ls;
+  p.innerHTML=`<div class=row><input id=sq placeholder="Search songs"><button class=go id=snw title="Type lyrics from scratch">＋ New</button><button onclick="$('#sf').click()">Import .txt / .xml</button><input id=sf type=file accept=".txt,.xml" multiple hidden></div><div id=sl></div><small style="color:#888">Separate slides with a blank line. ＋ New lets you type lyrics from scratch; ✎ edits a saved song.</small>`;
+  const ls=()=>{$('#sl').innerHTML=Object.keys(songs).filter(n=>n.toLowerCase().includes($('#sq').value.toLowerCase())).sort().map(n=>`<div class=it data-s="${esc(n)}"><span>♪ ${esc(n)}</span><span class=acts><x class=ed data-es="${esc(n)}" title="Edit lyrics">✎</x><x data-ds="${esc(n)}" title="Delete">✕</x></span></div>`).join('')||'<span style="color:#777">No songs yet — press ＋ New to type one, or Import .txt / .xml.</span>'};ls();$('#sq').oninput=ls;
   $('#snw').onclick=()=>{editing={orig:null,name:'',text:''};panel()};
-  $('#sf').onchange=async e=>{for(const f of e.target.files)await put('song',{name:f.name.replace(/\.txt$/i,''),text:await f.text()});await boot()}}
+  $('#sf').onchange=async e=>{const fl=[...e.target.files];e.target.value='';await importSongFiles(fl)}}
  else if(tab=='Media'){p.innerHTML=`<div class=row><select id=ma><option>Both</option><option>Preview</option><option>Live</option></select><select id=mu title="How a clicked image/video is used"><option value=bg>As background</option><option value=only>Project only (full screen)</option></select><button onclick="$('#mf').click()">Import</button><input id=mf type=file accept=".jpg,.jpeg,.png,.mp4,.webm,.wmv" multiple hidden></div><div class=mg><div class=mt data-m="" style="display:grid;place-items:center">None</div>${Object.values(media).map(m=>`<div class=mt data-m="${esc(m.name)}">${m.k=='v'?`<video src="${url(m)}" muted preload=metadata></video>`:`<img src="${url(m)}">`}<x data-dm="${esc(m.name)}">✕</x></div>`).join('')}</div><small style="color:#888">Note: browsers can't play .wmv reliably — convert to .mp4.</small>`;
   $('#mu').value=muM;$('#mu').onchange=()=>muM=$('#mu').value;$('#mf').onchange=async e=>{for(const f of e.target.files)await put('media',{name:f.name,blob:f,k:/video|wmv/.test(f.type)||/\.(mp4|webm|wmv)$/i.test(f.name)?'v':'i'});await boot()}}
  else if(tab=='Online'){
@@ -694,7 +744,7 @@ async function githubSync(){const btn=$('#gsync');try{if(btn){btn.disabled=true;
  let files=null;for(const c of cands){try{const r=await fetch(`https://api.github.com/repos/${owner}/${c.repo}/contents/${c.dir}`);if(r.ok){const j=await r.json();if(Array.isArray(j)){files=j;break}}}catch(e){}}
  if(!files)return;
  const ewbBases=new Set(files.filter(f=>f.type==='file'&&/\.ewb$/i.test(f.name)).map(f=>f.name.replace(/\.ewb$/i,'').toUpperCase())),haveFile=new Set(Object.values(bibleSrc).filter(x=>x.src==='ewb'&&x.file).map(x=>x.file)),isEw=n=>(bibleSrc[n]||{}).src==='ewb';
- const haveB=new Set(Object.keys(bibles)),haveS=new Set(Object.keys(songs)),haveM=new Set(Object.keys(media)),haveP=new Set(Object.keys(pptxs).filter(n=>(pptxs[n].slides[0]||{}).v>=2));
+ const haveB=new Set(Object.keys(bibles)),haveS=new Set(Object.keys(songs)),haveM=new Set(Object.keys(media)),haveSF=new Set(Object.values(songs).map(x=>x.file).filter(Boolean)),haveP=new Set(Object.keys(pptxs).filter(n=>(pptxs[n].slides[0]||{}).v>=2));
  for(const f of files){if(f.type!=='file')continue;const name=f.name,low=name.toLowerCase();
   if(low==='index.html'||!f.download_url)continue;
   if(low.endsWith('.json')||low.endsWith('.ewb')){const isE=low.endsWith('.ewb'),base=name.replace(/\.(json|ewb)$/i,'').toUpperCase();
@@ -707,7 +757,10 @@ async function githubSync(){const btn=$('#gsync');try{if(btn){btn.disabled=true;
   else if(low.endsWith('.pptx')){const base=name.replace(/\.pptx$/i,'');if(haveP.has(base)||typeof JSZip=='undefined')continue;
    try{const blob=await(await fetch(f.download_url)).blob();const file=new File([blob],name);const sl2=await parsePptx(file);if(sl2.length)await put('pptx',{name:base,slides:sl2})}catch(e){}}
   else if(low.endsWith('.txt')){const base=name.replace(/\.txt$/i,'');if(haveS.has(base))continue;
-   try{const text=await(await fetch(f.download_url)).text();await put('song',{name:base,text})}catch(e){}}}
+   try{const text=await(await fetch(f.download_url)).text();await put('song',{name:base,text})}catch(e){}}
+  else if(low.endsWith('.xml')){if(haveSF.has(name))continue;      // already imported from this file
+   try{const sg=xmlSong(decodeText(await(await fetch(f.download_url)).arrayBuffer()),name.replace(/\.xml$/i,''));if(haveS.has(sg.name))continue;   // same title already saved (maybe edited) — leave it alone
+    await put('song',{name:sg.name,text:sg.text,file:name});haveS.add(sg.name);haveSF.add(name)}catch(e){}}}
  await boot()}catch(e){console.error('GitHub sync failed',e)}finally{if(btn){btn.disabled=false;btn.textContent='🔄'}}}
 // events
 document.addEventListener('click',e=>{const t=e.target,g=a=>t.closest(`[${a}]`)?.getAttribute(a);
