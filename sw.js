@@ -4,7 +4,7 @@
    live in the browser's own storage (IndexedDB / localStorage) and are available offline.
    Optional hygiene: bump VERSION when you ship a new release (the page itself always
    refreshes from the network first when online, so forgetting is harmless). */
-const VERSION = 'v1.9.1';
+const VERSION = 'v1.12.0';
 const SHELL = 'dow-shell-' + VERSION;
 const LIBS = 'dow-libs-v1';
 const SHELL_URLS = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];

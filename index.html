@@ -14,7 +14,7 @@
            (positioned text boxes with their own size/colour/bold, plus embedded images and
            slide background) instead of just extracted text. Added GitHub-folder auto-sync
            (🔄 button, header) that lists the repo folder via the GitHub API and imports any
-           new .json Bibles, images/video, .pptx decks and .txt lyric files it finds —
+           new .json Bibles, images/video, .pptx decks and .txt/.xml lyric files it finds —
            runs automatically once per load and skips anything already imported.
   v1.1.1 — Fixed: Text colour picker had no effect (a hardcoded white was baked into the
            slide CSS, overriding it). Text and ref colour changes now also apply instantly
@@ -109,9 +109,54 @@
            holds both (e.g. niv.ewb and niv.json) only the .ewb is used, and an .ewb found on 🔄
            replaces a version that was loaded earlier from a .json (including the auto-loaded
            niv.json). On first launch niv.ewb is tried before niv.json.
+  v1.9.2 — Songs can now be imported from .xml files as well as .txt. The Songs tab's Import button
+           (several files at once) and the GitHub folder sync (🔄) both accept them. Supports the
+           OpenLyrics format (what OpenLP exports): the song title comes from the file, each verse
+           becomes a slide, line breaks are kept, and the file's verse order is followed. Simple
+           OpenSong-style .xml is read too. Files that aren't song lyrics are reported, not imported.
+  v1.10.0 — (1) LIVE VIDEO SOURCE. New "Camera" tab: pick any camera, USB/HDMI capture card or phone used as a
+           webcam that the browser can see (🔍 Find asks permission and lists them), then press Preview or
+           ⚡ Project to show the live picture full screen on the output. It follows Media fit and "Media
+           fills whole display", and can also be used as a background behind lyrics and verses. Options:
+           quality (Auto / 720p / 1080p), mirror, optional sound from the source on the output (with its own
+           sound-input list, for capture cards), Stop & release. Space freezes / unfreezes the picture. A source
+           can be added to the Quick Dock. The device is opened once and shared with the output window. Needs
+           the app's https address (or localhost) and your permission to use the camera.
+           (2) EXPORT. New "Export" tab: tick the lyrics (.txt), Bible versions (.json, re-importable) and PPTX
+           decks (the original .pptx file) you want — or press Backup everything — and save them as one .zip
+           or as separate files. PPTX decks now keep their original file when imported; decks imported by
+           earlier versions need one re-import (🔄 refills GitHub-hosted decks automatically).
+           (3) FIX: ⚡ Project (Quick Verse bar, Online tab, Camera tab) now also opens the output window on a
+           computer with a single screen; before, "Auto-open on 2nd screen" swallowed the request.
+  v1.11.0 — (1) SONGS: the Songs search box now also looks INSIDE the lyrics. Type any word(s) from a song
+           ("amazing grace", "lov", "sweet sound"): matching songs are listed with the matching lyric line
+           highlighted, and clicking one opens it on the slide that contains the words. Titles still work as
+           before and are listed first. (2) SCRIPTURES: new search box at the top of the Bible tab finds verses by
+           a word or phrase in the selected version (partial words work; several words = all of them, exact
+           phrase first). Click = load into Preview · Shift+click = whole chapter, positioned on that verse ·
+           ⚡ = project now. The Quick Verse bar does the same when what you type is not a reference (e.g.
+           "so loved the world"). (3) MEDIA: images and animated clips are now in separate sections; every
+           tile shows its file name, and hovering shows a tooltip with length, resolution and size. Clip
+           thumbnails can animate — "Play on hover" (default), "Always playing" or "Still". The Preview and Live
+           labels now also show the name of the clip / image being previewed or live, and of the background in use.
+  v1.12.0 — (1) LIVE ALERTS, like EasyWorship: new "Alerts" tab and an always-visible ALERTS strip under the
+           controls. NURSERY alert: type a child number (key N, Enter) and it appears discreetly on the screen
+           in a small box (several numbers can show together; ✕ removes one). MESSAGE alert: show typed text or a
+           saved message as a bar or corner box over the live slide — still or scrolling — hide it by hand or
+           after a set time, or AUTO-DISPLAY / ROTATE the ticked messages (show for N s, wait N s). FOLDBACK
+           alert: text sent only to the new STAGE DISPLAY (🎤 Stage Display button) — a second window for the
+           worship leader / speaker showing the clock, the live slide, the next slide, any token you mark 🎤,
+           and the foldback message. TOKENS: live values for alert text, written {{Name}} — a clock, a
+           countdown to a time of day, a countdown from a length of time (start / pause / reset), or a count-up
+           timer; {{time}}, {{time24}} and {{date}} are always available. Position, size, colours, opacity and
+           hide-time can be set for each alert type. Alerts also show on the Live thumbnail.
+           (2) TEMPLATES can now be moved between devices and browsers: Templates (right panel) has
+           ⬇ Export / ⬆ Import. The file carries your saved display templates plus your alert messages,
+           tokens and appearance, and any imported fonts the templates use. Importing never overwrites: a
+           template whose name is already taken is added as "Name (2)", identical ones are skipped.
   Bump DOW_VERSION below and add a new line here whenever a change ships.
 -->
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#1A1A1A"><title>DOW Software v1.9.1 — Dawn of Worship | Mega Tag Enterprise</title>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#1A1A1A"><title>DOW Software v1.12.0 — Dawn of Worship | Mega Tag Enterprise</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous"></script>
 <style>
 :root{--g:#C9932E;--d:#1A1A1A;--s:#666;--w:#fff;--bg:#101010;--l:#2a2a2a;--fg:#eee;--btn:#262626;--btnb:#3a3a3a}
@@ -127,7 +172,23 @@ h4{margin:0 0 6px;color:var(--g);font-size:11px;letter-spacing:2px;text-transfor
 button,select,input{background:var(--btn);color:var(--fg);border:1px solid var(--btnb);border-radius:4px;padding:5px 8px;font:inherit}
 input[type=color]{padding:2px;height:30px;cursor:pointer}
 button{cursor:pointer}button:hover{border-color:var(--g)}button.go{background:var(--g);color:#000;font-weight:bold;border-color:var(--g)}
-.tabs{display:flex;gap:4px;margin-bottom:8px}.tabs button{flex:1}.tabs .on{background:var(--g);color:#000}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}.tabs button{flex:1 0 auto;padding:5px 6px}.tabs .on{background:var(--g);color:#000}
+.stabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}.stabs button{flex:1 0 auto;padding:5px 6px}.stabs .on{background:var(--g);color:#000}
+#alstrip{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin:6px 0 4px;padding:5px 6px;border:1px solid var(--l);border-radius:5px}#alstrip b{color:var(--g);font-size:11px;letter-spacing:2px}#alstrip select{max-width:120px}#alstrip input{width:112px}
+#alchips{flex-basis:100%;display:flex;flex-wrap:wrap;gap:4px;min-height:20px;align-items:center}#anch{margin:6px 0 2px}
+.chip{display:inline-flex;gap:4px;align-items:center;background:var(--btn);border:1px solid var(--btnb);border-radius:12px;padding:1px 4px 1px 9px;margin:1px;max-width:100%}.chip x{cursor:pointer;color:#888;padding:0 4px}.chip x:hover{color:#e55}
+.alw{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;pointer-events:none;z-index:6;overflow:hidden}.ap{position:absolute;display:flex;flex-direction:column;gap:12px}
+.ap-top,.ap-bottom{left:0;right:0}.ap-top{top:0}.ap-bottom{bottom:0}.ap-tl{left:30px;top:30px;align-items:flex-start}.ap-tr{right:30px;top:30px;align-items:flex-end}.ap-bl{left:30px;bottom:30px;align-items:flex-start}.ap-br{right:30px;bottom:30px;align-items:flex-end}.ap-tl,.ap-tr,.ap-bl,.ap-br{max-width:68%}
+.ab{line-height:1.25;text-align:center;overflow:hidden}.ab.bar{padding:14px 40px;width:100%}.ab.box{padding:14px 28px;border-radius:16px;box-shadow:0 4px 18px #0008}.ab .at{white-space:pre-line}
+.ab .cr{display:inline-block;white-space:nowrap;padding-left:100%;animation:alcr 20s linear infinite}.ab .cr .at{white-space:nowrap}@keyframes alcr{to{transform:translateX(-100%)}}
+body.stg{background:#000;color:#fff;display:block;margin:0;height:100vh;overflow:hidden;font-family:Helvetica,Arial,sans-serif}body.stg>:not(#stg){display:none}
+#stg{display:flex;flex-direction:column;height:100vh;padding:2vh 3vw;gap:1.6vh}.sgf{display:none;padding:1.4vh 2vw;border-radius:10px;text-align:center;line-height:1.2}
+.sgt{display:flex;justify-content:space-between;align-items:flex-start;gap:2vw}.sgc{font-size:7vh;font-weight:700;color:#C9932E}.sgk{display:flex;gap:2.4vw;flex-wrap:wrap;justify-content:flex-end;font-size:5vh;font-weight:700}.sgk span{display:inline-flex;flex-direction:column;align-items:flex-end}.sgk small{font-size:2vh;color:#999;font-weight:400}
+.sgn{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;justify-content:center;text-align:center}.sgx{white-space:pre-line;font-weight:700;line-height:1.2}.sgr{color:#C9932E;font-size:2.6vh;margin-top:1vh}
+.sgnx{display:none;border-top:1px solid #333;padding-top:1vh;color:#9a9a9a;font-size:3.4vh;white-space:pre-line;max-height:20vh;overflow:hidden}.sgnx b{color:#C9932E;letter-spacing:3px;font-size:2vh;display:block}.sgm{color:#8bd;font-size:2.6vh;min-height:3vh}.sgh{position:fixed;left:50%;bottom:6px;transform:translateX(-50%);color:#555;font-size:12px}
+.mh{display:flex;justify-content:space-between;align-items:center;margin:12px 0 4px;color:var(--g);font-size:11px;letter-spacing:2px;text-transform:uppercase}.mh small{color:#888;letter-spacing:0}.nm{letter-spacing:0;text-transform:none;color:var(--fg);margin-left:8px;display:inline-block;max-width:75%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:bottom;font-size:12px}.mt:hover{border-color:var(--g)}.mt .cap{position:absolute;left:0;right:0;bottom:0;background:#000b;color:#fff;font-size:10px;line-height:14px;padding:0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;text-align:left}.mt .dur{position:absolute;left:3px;top:2px;background:#000b;color:#fff;font-size:10px;line-height:14px;padding:0 4px;border-radius:3px;pointer-events:none}.mt .dur:empty{display:none}
+mark{background:var(--g);color:#000;border-radius:2px;padding:0 1px}.bres{max-height:46vh;overflow:auto;border:1px solid var(--l);border-radius:4px;margin-bottom:8px}.bres .it{align-items:flex-start}.bres .it x{font-size:15px}.bres .it x:hover{color:var(--g)}
+.xh{display:flex;justify-content:space-between;align-items:center;margin:12px 0 4px;color:var(--g);font-size:11px;letter-spacing:1px;text-transform:uppercase}.xr{display:flex;gap:6px;align-items:flex-start;padding:3px 2px;border-bottom:1px solid var(--l);cursor:pointer}.xr input{margin-top:2px}.xr span{word-break:break-word}
 .row{display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap}.row input{flex:1;min-width:0}
 .it{padding:5px 6px;border-bottom:1px solid var(--l);cursor:pointer;display:flex;justify-content:space-between;gap:6px}.it:hover{background:var(--l)}.it x{color:#888}.it x:hover{color:#e55}
 .mons{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mons label{color:#999;font-size:11px;letter-spacing:2px}.mons .live label{color:#e55}
@@ -150,24 +211,71 @@ body.out{background:#000;display:block}body.out .scr{position:fixed;inset:0;bord
 <header><b>MEGA TAG <i>ENTERPRISE</i></b><span>|</span><span>DOW Software · Dawn of Worship</span><span id="verbadge" style="color:var(--g);font-size:11px;letter-spacing:1px;border:1px solid var(--g);border-radius:3px;padding:1px 6px"></span><span id="netbadge" class="netb" title="Offline cache status"></span><small style="display:flex;align-items:center;gap:10px"><button id="gsync" title="Re-scan the GitHub folder for new Bible/song/media/PPTX files">🔄</button><button id="th" title="Toggle control-panel theme — projected output always stays black">🌓</button>Quality Goods &amp; Services</small></header>
 <main>
 <section id="lib"><div class="tabs"></div><div id="pn"></div></section>
-<section><div id="qvbar"><b>QUICK VERSE</b><input id="qv" placeholder="book:chapter:verse — John:3:16 · Ps 23 · 1 Cor 13:4-7" autocomplete="off" spellcheck="false"><select id="qvv" title="Bible version" style="width:84px"></select><button id="qvg" title="Load into Preview (Enter)">Preview</button><button class="go" id="qvl" title="Load, take live and show on the output screen (Shift+Enter)">⚡ Project</button></div><div id="qvst"></div><div class="mons"><div><label>PREVIEW</label><div class="scr" id="pv"></div></div><div class="live"><label>● LIVE</label><div class="scr" id="lv"></div></div></div>
+<section><div id="qvbar"><b>QUICK VERSE</b><input id="qv" placeholder="book:chapter:verse — John:3:16 · Ps 23 · or words to find" autocomplete="off" spellcheck="false"><select id="qvv" title="Bible version" style="width:84px"></select><button id="qvg" title="Load into Preview (Enter)">Preview</button><button class="go" id="qvl" title="Load, take live and show on the output screen (Shift+Enter)">⚡ Project</button></div><div id="qvst"></div><div class="mons"><div><label>PREVIEW<span id=pvn class=nm></span></label><div class="scr" id="pv"></div></div><div class="live"><label>● LIVE<span id=lvn class=nm></span></label><div class="scr" id="lv"></div></div></div>
 <div class="ctl"><button id="pr">◀ Prev</button><button id="nx">Next ▶</button><button class="go" id="tk">TAKE LIVE ⏎</button><button id="bl">Blank (B)</button>
-<select id="tr"><option>fade</option><option>slide</option><option>zoom</option><option>cut</option></select><label><input type="checkbox" id="au"> Auto-take (D)</label><label style="margin-left:auto" title="When a second display is detected, send the output to it automatically the first time you take something live"><input type="checkbox" id="ao"> Auto-open on 2nd screen</label><button id="op" title="Opens on your second monitor/projector if one is connected, and goes fullscreen automatically — titled 'DOW Software — OUTPUT' for easy targeting in OBS (Display Capture if it fills a real second screen, or Window Capture by title otherwise)">🖥 Open Output</button><small id="os" style="flex-basis:100%;color:var(--s)"></small></div>
+<select id="tr"><option>fade</option><option>slide</option><option>zoom</option><option>cut</option></select><label><input type="checkbox" id="au"> Auto-take (D)</label><label style="margin-left:auto" title="When a second display is detected, send the output to it automatically the first time you take something live"><input type="checkbox" id="ao"> Auto-open on 2nd screen</label><button id="op" title="Opens on your second monitor/projector if one is connected, and goes fullscreen automatically — titled 'DOW Software — OUTPUT' for easy targeting in OBS (Display Capture if it fills a real second screen, or Window Capture by title otherwise)">🖥 Open Output</button><button id="opst" title="Opens the stage display: a second window for the worship leader or speaker (clock, live slide, next slide, foldback messages). Never shown to the congregation.">🎤 Stage Display</button><small id="os" style="flex-basis:100%;color:var(--s)"></small></div>
+<div id="alstrip"><b>ALERTS</b><input id="aln" placeholder="👶 Nursery #" inputmode="numeric" autocomplete="off" title="Type a child number and press Enter (shortcut: N)"><button id="alna" title="Show this child number on the screen">Show</button><select id="alm" title="Saved messages"></select><button id="alms" title="Show the chosen message on the screen">💬 Show</button><select id="alf" title="Saved foldback messages"></select><button id="alfs" title="Send the chosen message to the stage display only">🎤 Stage</button><button id="alca" title="Remove every alert from the screens">■ Clear all</button><div id="alchips"></div></div>
 <h4>Slides <button id="ad" style="float:right;padding:1px 8px">＋ Dock</button></h4><div class="sls" id="sls"></div></section>
 <section><h4>Quick Dock</h4><div id="dk"></div>
 <details open><summary>DISPLAY SETTINGS</summary><div class="f" id="st"></div>
 <div class=row style="margin-top:8px"><button id="fib" style="flex:1">🔤 Import Font (.ttf/.otf/.woff)</button><input id="fif" type="file" accept=".ttf,.otf,.woff,.woff2" multiple hidden></div>
 <div style="margin-top:12px"><h4 style="margin-bottom:4px">Templates</h4>
 <div class=row><input id="tpn" placeholder="Template name" style="flex:1"><button id="tpsv">💾 Save</button></div>
+<div class=row><button id="tpex" style="flex:1" title="Save all your templates (display + alert messages, tokens, appearance) to a file">⬇ Export</button><button id="tpim" style="flex:1" title="Load a templates file from another device or browser — nothing is overwritten">⬆ Import</button><input id="tpif" type="file" accept=".json,.dowtpl" hidden></div>
 <div id="tpl"></div></div>
 </details>
-<p style="color:#777;font-size:11px">Keys: ← → navigate · Enter take · B blank · O open output · D auto-take · / or Ctrl+K quick verse<br>Quick verse: Enter = preview · Shift+Enter = straight to the output screen · ↑ ↓ change slide (Shift = live)<br>Output window: opens on the 2nd screen automatically. If it isn&#39;t fullscreen yet, click it once (or press F).</p></section>
+<p style="color:#777;font-size:11px">Keys: ← → navigate · Enter take · B blank · O open output · D auto-take · / or Ctrl+K quick verse · N nursery number<br>Quick verse: Enter = preview · Shift+Enter = straight to the output screen · ↑ ↓ change slide (Shift = live)<br>Output window: opens on the 2nd screen automatically. If it isn&#39;t fullscreen yet, click it once (or press F).</p></section>
 </main>
 <script>
-const DOW_VERSION='1.9.1';
+const DOW_VERSION='1.12.0';
+// ---- song files: .txt (as-is) and .xml (OpenLyrics from OpenLP; basic OpenSong too) -> lyric text, blank line = new slide
+function decodeText(buf){const u=new Uint8Array(buf);let enc='utf-8';
+ if(u[0]===0xFF&&u[1]===0xFE)enc='utf-16le';else if(u[0]===0xFE&&u[1]===0xFF)enc='utf-16be';
+ else{const m=new TextDecoder('latin1').decode(u.slice(0,200)).match(/<\?xml[^>]*encoding\s*=\s*["']([\w.:-]+)["']/i);if(m)enc=m[1]}
+ let t;try{t=new TextDecoder(enc).decode(u)}catch(e){t=new TextDecoder('utf-8').decode(u)}
+ return t.replace(/^\uFEFF/,'')}
+function xmlSong(xml,fallback){
+ const doc=new DOMParser().parseFromString(xml,'application/xml');
+ if(doc.getElementsByTagName('parsererror').length)throw new Error('not valid XML');
+ const root=doc.documentElement;if(!root||!/^song$/i.test(root.localName))throw new Error('not a song file');
+ const A=(el,n)=>[...el.getElementsByTagNameNS('*',n)];
+ const flat=n=>String(n||'').replace(/\s+/g,' ').trim();
+ const lt=n=>{let t='';for(const c of n.childNodes){if(c.nodeType===3||c.nodeType===4)t+=c.nodeValue.replace(/\s+/g,' ');
+   else if(c.nodeType===1){const g=c.localName.toLowerCase();if(g==='br')t+='\n';else if(g!=='chord'&&g!=='comment')t+=lt(c)}}return t};
+ const block=n=>lt(n).split('\n').map(x=>x.trim()).filter(Boolean).join('\n');
+ const tt=A(root,'title')[0];
+ const name=flat(tt&&tt.textContent).replace(/[\s,;:]+$/,'')||fallback;
+ const lyr=A(root,'lyrics')[0];if(!lyr)throw new Error('no lyrics found');
+ let verses=A(lyr,'verse').map(v=>({name:v.getAttribute('name')||'',lang:v.getAttribute('lang')||'',
+   slides:A(v,'lines').map(block).filter(Boolean)})).filter(v=>v.slides.length);
+ const slides=[];
+ if(verses.length){                                   // OpenLyrics
+  const langs=[...new Set(verses.map(v=>v.lang).filter(Boolean))];
+  if(langs.length>1)verses=verses.filter(v=>!v.lang||v.lang===langs[0]);   // bilingual file: first language only
+  const ord=A(root,'verseOrder')[0],toks=ord?flat(ord.textContent).split(' ').filter(Boolean):[];
+  let seq=[];
+  for(const t of toks)seq.push(...verses.filter(v=>v.name===t||(v.name.startsWith(t)&&/^[a-z]$/i.test(v.name.slice(t.length)))));
+  if(!seq.length)seq=verses;
+  seq.forEach(v=>slides.push(...v.slides));
+ }else{                                               // OpenSong-style: [V1] headers, ".chord" lines, blank line = slide
+  let cur=[];const flush=()=>{if(cur.length)slides.push(cur.join('\n'));cur=[]};
+  for(const ln of String(lyr.textContent).replace(/\r/g,'').split('\n')){
+   if(/^\s*\[.*\]\s*$/.test(ln)||/^\s*$/.test(ln)){flush();continue}
+   if(ln[0]==='.')continue;
+   cur.push(ln.replace(/^ /,'').replace(/\|+/g,' ').trimEnd())}
+  flush()}
+ const text=slides.join('\n\n').trim();if(!text)throw new Error('no lyrics found');
+ return{name,text}}
+async function importSongFiles(files){const bad=[];
+ for(const f of files){try{
+   if(/\.xml$/i.test(f.name)){const s=xmlSong(decodeText(await f.arrayBuffer()),f.name.replace(/\.xml$/i,''));await put('song',{name:s.name,text:s.text,file:f.name})}
+   else await put('song',{name:f.name.replace(/\.txt$/i,''),text:await f.text()})
+  }catch(e){bad.push(f.name+' — '+e.message)}}
+ await boot();if(bad.length)alert('Could not import:\n'+bad.join('\n'))}
+
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 {const b=document.getElementById('verbadge');if(b)b.textContent='v'+DOW_VERSION}
-const OUT=location.hash=='#out';if(OUT)document.body.className='out';
+const OUT=location.hash=='#out',STG=location.hash=='#stage';if(OUT)document.body.className='out';
 // ---------- offline cache (service worker sw.js + browser storage protection) ----------
 const JSZIP_URL='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
 const OFF={supported:('serviceWorker' in navigator)&&/^https?:$/.test(location.protocol),ready:false,lib:false,persisted:null,usage:null};
@@ -205,6 +313,25 @@ const put=(s,v)=>tx(s,'readwrite',o=>o.put(v)),all=s=>tx(s,'readonly',o=>o.getAl
 // ---------- screen renderer (used by preview, live and output window) ----------
 const TRANS={fade:[{opacity:0},{opacity:1}],slide:[{transform:'translateX(8%)',opacity:0},{transform:'none',opacity:1}],zoom:[{transform:'scale(.9)',opacity:0},{transform:'none',opacity:1}]};
 const FITM={cover:'cover',contain:'contain',fill:'fill'};
+// ---- live video source (camera / capture card), v1.10.0 ----
+// CAM holds the running MediaStream of THIS window. The control panel opens the device and hands the very same stream
+// to the output window (same app, same address) so the device is opened only once. If that hand-over is ever refused,
+// the output window opens the device itself with the same settings (camOpen).
+const CAM={stream:null,spec:null,own:false,mine:null};
+async function camTry(sp){const gum=c=>navigator.mediaDevices.getUserMedia(c);
+ const R={720:[1280,720],1080:[1920,1080]}[sp.res],v={deviceId:{exact:sp.id},frameRate:{ideal:30}};if(R){v.width={ideal:R[0]};v.height={ideal:R[1]}}
+ const a=sp.aud?(sp.aid?{deviceId:{exact:sp.aid}}:true):false;let first=null;
+ for(const c of[{video:v,audio:a},{video:v,audio:false},{video:{deviceId:{exact:sp.id}},audio:false}]){   // sound or picture settings that fail are dropped step by step
+  try{return await gum(c)}catch(e){first=first||e;if(e&&e.name==='NotAllowedError')break}}
+ throw first}
+async function camResolve(sp){   // some browsers give the same device a different id in each window (or after site data is cleared): find it again by its name
+ let ds=await navigator.mediaDevices.enumerateDevices();
+ if(!ds.some(d=>d.kind==='videoinput'&&d.label)){const t=await navigator.mediaDevices.getUserMedia({video:true});t.getTracks().forEach(x=>x.stop());ds=await navigator.mediaDevices.enumerateDevices()}
+ const f=(k,id,lb)=>{const l=ds.filter(d=>d.kind===k&&d.deviceId);return(l.find(d=>d.deviceId===id)||l.find(d=>lb&&d.label===lb)||{}).deviceId||''};
+ return{...sp,id:f('videoinput',sp.id,sp.label)||sp.id,aid:sp.aid?(f('audioinput',sp.aid,sp.alabel)||sp.aid):''}}
+async function camOpen(sp){try{return await camTry(sp)}catch(e){
+ if(e&&(e.name==='OverconstrainedError'||e.name==='NotFoundError')){try{return await camTry(await camResolve(sp))}catch(e2){}}
+ throw e}}
 const siteCSS=(z,dk)=>`border:0;position:absolute;left:0;top:0;width:${100/z}%;height:${100/z}%;transform:scale(${z});transform-origin:0 0;background:${dk?'#000':'#fff'};${dk?'filter:invert(1) hue-rotate(180deg);':''}`;
 const PX_W=1920,PX_V=2;
 const pxCache=new WeakMap();let pxGid=0;
@@ -259,11 +386,42 @@ function pxEl(e){let box=`left:${pxN(e.x)}px;top:${pxN(e.y)}px;width:${pxN(e.w)}
 function pxPaper(sl){let h=pxCache.get(sl);if(h)return h;const k=Math.min(PX_W/sl.sw,1080/sl.sh),ox=(PX_W-sl.sw*k)/2,oy=(1080-sl.sh*k)/2,b=sl.bg||{c:'#fff'};
  let bg=b.c?`background:${b.c}`:b.img?`background:url("${b.img}") center/100% 100% no-repeat`:b.g?`background:linear-gradient(${b.g.ang+90}deg,${b.g.st.map(s=>`${s[1]} ${pxN(s[0])}%`).join(',')})`:'background:#fff';
  h=`<div class="pxpaper" style="width:${sl.sw}px;height:${sl.sh}px;transform:translate(${pxN(ox)}px,${pxN(oy)}px) scale(${pxN(k)});${bg}">${sl.els.map(pxEl).join('')}</div>`;pxCache.set(sl,h);return h}
-class Scr{constructor(h){this.h=h;h.innerHTML='<div class=st><div class=bg></div><div class=dm></div><div class=mo></div><div class=px></div><div class=tx></div></div>';this.st=h.firstChild;[this.bg,this.dm,this.mo,this.px,this.tx]=this.st.children;
- new ResizeObserver(()=>{const w=h.clientWidth,H=h.clientHeight,k=Math.min(w/1920,H/1080);this.st.style.transform=`translate(${(w-1920*k)/2}px,${(H-1080*k)/2}px) scale(${k})`;this.g={w,H,k};this.full()}).observe(h)}
+// ---- alerts: helpers shared by the control panel, the output window and the stage display (v1.12.0) ----
+const hexA=(h,op)=>{const m=/^#?([0-9a-f]{6})$/i.exec(h||'');if(!m)return'rgba(0,0,0,.8)';const n=parseInt(m[1],16);return`rgba(${n>>16&255},${n>>8&255},${n&255},${Math.max(0,Math.min(100,+op||0))/100})`};
+function fmtHMS(s){s=Math.max(0,Math.floor(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60,p=n=>String(n).padStart(2,'0');return h?h+':'+p(m)+':'+p(x):p(m)+':'+p(x)}
+function fmtClock(d,fmt,sec){let h=d.getHours();const m=String(d.getMinutes()).padStart(2,'0'),s=String(d.getSeconds()).padStart(2,'0');
+ if(fmt==='24')return String(h).padStart(2,'0')+':'+m+(sec?':'+s:'');const ap=h<12?'AM':'PM';h=h%12||12;return h+':'+m+(sec?':'+s:'')+' '+ap}
+// token = a live value you can drop into alert text as {{Name}}: clock · countdown to a time of day · countdown from a length of time · count-up timer
+function tokVal(t,now){
+ if(t.type==='clock')return fmtClock(new Date(now),t.fmt,t.sec);
+ if(t.type==='cdt'){const[H,M]=String(t.at||'00:00').split(':').map(Number),d=new Date(now);d.setHours(H||0,M||0,0,0);const ms=d-now;return ms>0?fmtHMS(Math.ceil(ms/1000)):(t.done||fmtHMS(0))}
+ if(t.type==='cdd'){const r=t.run||{},ms=r.running?r.end-now:(r.rem??t.dur*1000);return ms>0?fmtHMS(Math.ceil(ms/1000)):(t.done||fmtHMS(0))}
+ if(t.type==='tmr'){const r=t.run||{},ms=(r.base||0)+(r.running?now-r.start:0);return fmtHMS(ms/1000)}
+ return''}
+function alResolve(text,toks,now){return String(text).replace(/\{\{\s*([^{}]+?)\s*\}\}/g,(m,k)=>{const l=k.toLowerCase();
+ if(l==='time')return fmtClock(new Date(now),'12',false);if(l==='time24')return fmtClock(new Date(now),'24',false);
+ if(l==='date')return new Date(now).toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+ const t=(toks||[]).find(x=>String(x.name).toLowerCase()===l);return t?tokVal(t,now):m})}
+class Scr{constructor(h){this.h=h;h.innerHTML='<div class=st><div class=bg></div><div class=dm></div><div class=mo></div><div class=px></div><div class=tx></div></div><div class=alw><div class="ap ap-top"></div><div class="ap ap-bottom"></div><div class="ap ap-tl"></div><div class="ap ap-tr"></div><div class="ap ap-bl"></div><div class="ap ap-br"></div></div>';this.st=h.firstChild;this.alw=h.lastChild;[this.bg,this.dm,this.mo,this.px,this.tx]=this.st.children;
+ new ResizeObserver(()=>{const w=h.clientWidth,H=h.clientHeight,k=Math.min(w/1920,H/1080);this.st.style.transform=`translate(${(w-1920*k)/2}px,${(H-1080*k)/2}px) scale(${k})`;this.alw.style.transform=this.st.style.transform;this.g={w,H,k};this.full()}).observe(h)}
  full(){const s=this.s||{},g=this.g;if(!g)return;const ox=(g.w-1920*g.k)/2,oy=(g.H-1080*g.k)/2,on=s.full!==false&&(ox>.5||oy>.5);[this.bg,this.dm,this.mo].forEach(e=>{if(on){e.style.inset='auto';e.style.left=(-ox/g.k)+'px';e.style.top=(-oy/g.k)+'px';e.style.width=(g.w/g.k)+'px';e.style.height=(g.H/g.k)+'px'}else{e.style.inset='';e.style.left=e.style.top=e.style.width=e.style.height=''}})}
- cfg(s){this.s=s;this.st.dataset.fit=s.fit||'cover';this.full();this.mo.querySelectorAll('.mf').forEach(n=>n.style.objectFit=FITM[s.fit||'cover']);const[t,r,b,l]=s.m;Object.assign(this.tx.style,{inset:`${t}% ${r}% ${b}% ${l}%`,fontFamily:s.ff,textAlign:s.al,color:s.col||'#fff'});this.tx.classList.toggle('sh',s.sh);this.dm.style.opacity=s.dim/100;this.tx.querySelectorAll('.sl small').forEach(n=>n.style.color=s.rcol||'#C9932E');this.tx.querySelectorAll('.sl').forEach(n=>this.fit(n))}
+ cfg(s){this.s=s;this.alw.style.fontFamily=s.ff;this.st.dataset.fit=s.fit||'cover';this.full();this.mo.querySelectorAll('.mf').forEach(n=>n.style.objectFit=FITM[s.fit||'cover']);const[t,r,b,l]=s.m;Object.assign(this.tx.style,{inset:`${t}% ${r}% ${b}% ${l}%`,fontFamily:s.ff,textAlign:s.al,color:s.col||'#fff'});this.tx.classList.toggle('sh',s.sh);this.dm.style.opacity=s.dim/100;this.tx.querySelectorAll('.sl small').forEach(n=>n.style.color=s.rcol||'#C9932E');this.tx.querySelectorAll('.sl').forEach(n=>this.fit(n))}
  fit(n){let f=this.s.fs;n.style.fontSize=f+'px';const w=n.firstChild;while(w.offsetHeight>n.clientHeight&&f>24)n.style.fontSize=(f-=4)+'px'}
+ camUpdate(){this.h.querySelectorAll('video[data-cam]').forEach(v=>{if(v.srcObject!==CAM.stream)v.srcObject=CAM.stream;if(CAM.stream){const p=v.play();p&&p.catch(()=>{})}})}
+ setAlerts(a){this.as=a||null;const rev=a?a.rev:-1;   // a = {rev, tok:[tokens], items:[{k,text,sty}]} — rebuilt only when rev changes; between changes only the token values tick
+  if(rev===this.arev&&this.alEls){this.alTok();return}
+  this.arev=rev;this.alEls=[];this.alw.querySelectorAll('.ap').forEach(c=>c.replaceChildren());
+  if(a&&a.items)for(const it of a.items){const st=it.sty,bar=st.pos==='top'||st.pos==='bottom',c=this.alw.querySelector('.ap-'+st.pos)||this.alw.querySelector('.ap-bottom'),e=document.createElement('div'),sp=document.createElement('span');
+   e.className='ab '+(bar?'bar':'box')+' ab-'+it.k;
+   e.style.cssText=`font-size:${+st.fs||44}px;color:${/^#[0-9a-f]{6}$/i.test(st.col)?st.col:'#ffffff'};background:${hexA(st.bg,st.op)};font-weight:${st.bold?700:400}`;
+   sp.className='at';let cr=null;
+   if(st.anim==='crawl'&&bar){cr=document.createElement('span');cr.className='cr';cr.append(sp);e.append(cr)}else e.append(sp);
+   c.append(e);this.alEls.push({it,sp,cr,spd:st.spd,last:null,cd:0})}
+  this.alTok();this.alTimer()}
+ alTok(){const now=Date.now(),toks=this.as?this.as.tok:[];
+  for(const x of this.alEls||[]){const t=alResolve(x.it.text,toks,now);if(t===x.last)continue;x.last=t;x.sp.textContent=t;
+   if(x.cr&&!x.cd){x.cd=1;requestAnimationFrame(()=>{const w=x.cr.offsetWidth;x.cr.style.animationDuration=Math.max(6,w/({slow:110,med:190,fast:300}[x.spd]||190))+'s'})}}}
+ alTimer(){const need=(this.alEls||[]).some(x=>/\{\{/.test(x.it.text));if(need&&!this.ati)this.ati=setInterval(()=>this.alTok(),1000);else if(!need&&this.ati){clearInterval(this.ati);this.ati=0}}
  clearSite(){if(this.web){this.web.remove();this.web=null}this.wf=null}
  setSiteView(z,dk){if(!this.wf)return;this.wf.style.cssText=siteCSS(z||1,dk)+(OUT?'':'pointer-events:none;');if(OUT&&this.web)this.web.style.background=dk?'#000':'#fff'}
  renderSite(sl){this.clearSite();const w=document.createElement('div');
@@ -286,8 +444,9 @@ class Scr{constructor(h){this.h=h;h.innerHTML='<div class=st><div class=bg></div
   if(tr=='cut'||!TRANS[tr])return old.forEach(o=>o.remove());n&&n.animate(TRANS[tr],{duration:500,easing:'ease-out'});old.forEach(o=>o.animate([{opacity:1},{opacity:0}],{duration:500}).onfinish=()=>o.remove())}
  clearMo(tr){const old=[...this.mo.children];this.mv=null;if(!old.length)return;if(tr=='cut'||!TRANS[tr])return old.forEach(o=>o.remove());old.forEach(o=>o.animate([{opacity:1},{opacity:0}],{duration:500}).onfinish=()=>o.remove())}
  renderMedia(sl,tr){const old=[...this.mo.children],m=sl.m,s=this.s||{},w=document.createElement('div');w.style.cssText='position:absolute;inset:0;background:#000';
-  const e=document.createElement(m.k=='v'?'video':'img');e.className='mf';e.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:'+FITM[s.fit||'cover'];e.src=m.u;
-  if(m.k=='v'){Object.assign(e,{loop:s.vloop!==false,playsInline:true,autoplay:true,muted:!(OUT&&s.vsound!==false)});const p=e.play();p&&p.catch(()=>{e.muted=true;e.play().catch(()=>{})});this.mv=e}else this.mv=null;
+  const e=document.createElement(m.k=='v'||m.k=='c'?'video':'img');e.className='mf';e.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:'+FITM[s.fit||'cover'];if(m.k!='c')e.src=m.u;
+  if(m.k=='c'){Object.assign(e,{playsInline:true,autoplay:true,muted:!(OUT&&m.aud)});e.dataset.cam='1';if(m.aud)e.dataset.aud='1';if(m.mir)e.style.transform='scaleX(-1)';e.srcObject=CAM.stream;const p=e.play();p&&p.catch(()=>{e.muted=true;e.play().catch(()=>{})});this.mv=e}
+  else if(m.k=='v'){Object.assign(e,{loop:s.vloop!==false,playsInline:true,autoplay:true,muted:!(OUT&&s.vsound!==false)});const p=e.play();p&&p.catch(()=>{e.muted=true;e.play().catch(()=>{})});this.mv=e}else this.mv=null;
   w.append(e);this.mo.append(w);if(tr=='cut'||!TRANS[tr]){old.forEach(o=>o.remove());return}
   w.animate(TRANS[tr],{duration:500,easing:'ease-out'});old.forEach(o=>o.animate([{opacity:1},{opacity:0}],{duration:500}).onfinish=()=>o.remove())}
  toggleMedia(){const v=this.mv;if(v)v.paused?v.play().catch(()=>{}):v.pause()}
@@ -305,7 +464,7 @@ class Scr{constructor(h){this.h=h;h.innerHTML='<div class=st><div class=bg></div
   this.px.append(wrap);
   if(tr=='cut'||!TRANS[tr]){old.forEach(o=>o.remove());return}
   wrap.animate(TRANS[tr],{duration:500,easing:'ease-out'});old.forEach(o=>o.animate([{opacity:1},{opacity:0}],{duration:500}).onfinish=()=>o.remove())}
- setBg(b){if((b?.u||'')==(this.cu||''))return;this.cu=b?.u;const old=[...this.bg.children];if(b){const e=document.createElement(b.k=='v'?'video':'div');if(b.k=='v')Object.assign(e,{src:b.u,loop:true,muted:true,autoplay:true,playsInline:true});else e.style.backgroundImage=`url("${b.u}")`;this.bg.append(e);e.animate([{opacity:0},{opacity:1}],{duration:600})}
+ setBg(b){if((b?.u||'')==(this.cu||''))return;this.cu=b?.u;const old=[...this.bg.children];if(b){const e=document.createElement(b.k=='v'||b.k=='c'?'video':'div');if(b.k=='c'){Object.assign(e,{muted:true,autoplay:true,playsInline:true});e.dataset.cam='1';if(b.mir)e.style.transform='scaleX(-1)';e.srcObject=CAM.stream;const p=e.play();p&&p.catch(()=>{})}else if(b.k=='v')Object.assign(e,{src:b.u,loop:true,muted:true,autoplay:true,playsInline:true});else e.style.backgroundImage=`url("${b.u}")`;this.bg.append(e);e.animate([{opacity:0},{opacity:1}],{duration:600})}
   old.forEach(o=>o.animate([{opacity:1},{opacity:0}],{duration:600}).onfinish=()=>o.remove())}}
 // ---------- settings ----------
 const D={m:[6,6,6,6],fs:72,dim:30,ff:'Helvetica,Arial,sans-serif',al:'center',sh:true,ref:true,tr:'fade',col:'#ffffff',rcol:'#C9932E',fit:'cover',full:true,vloop:true,vsound:true};
@@ -313,7 +472,11 @@ let S={...D,...JSON.parse(localStorage.getItem('dow.s')||'{}')};
 // ---------- OUTPUT WINDOW ----------
 if(OUT){document.title='DOW Software — OUTPUT';const o=new Scr(document.body.appendChild(Object.assign(document.createElement('div'),{className:'scr'})));o.cfg(S);
  const injectFontsOut=css=>{let st=document.getElementById('cfonts');if(!st){st=document.createElement('style');st.id='cfonts';document.head.appendChild(st)}st.textContent=css||''};
- addEventListener('message',e=>{const d=e.data||{};if(d.s){S=d.s;o.cfg(S)}if('bg'in d)o.setBg(d.bg);if('sl'in d)o.show(d.sl,d.tr);if('fontsCSS'in d)injectFontsOut(d.fontsCSS);if(d.sv)o.setSiteView(d.sv.z,d.sv.dk);if(d.mc)o.toggleMedia();if(d.fs)goFS().then(upd)});
+ addEventListener('message',e=>{const d=e.data||{};if(d.s){S=d.s;o.cfg(S)}if('al'in d)o.setAlerts(d.al);if('bg'in d)o.setBg(d.bg);if('sl'in d)o.show(d.sl,d.tr);if('fontsCSS'in d)injectFontsOut(d.fontsCSS);if(d.sv)o.setSiteView(d.sv.z,d.sv.dk);if(d.mc)o.toggleMedia();if('cam'in d)camMsg2(d.cam);if(d.fs)goFS().then(upd);camWatch()});
+ const camOwn=async sp=>{if(!sp||CAM.own)return;CAM.own=true;try{const st=await camOpen(sp);if(CAM.mine)CAM.mine.getTracks().forEach(t=>t.stop());CAM.mine=st;CAM.stream=st;o.camUpdate()}catch(e){console.warn('Output could not open the video source itself:',e)}finally{CAM.own=false}};
+ const camMsg2=sp=>{if(!sp){if(CAM.mine)CAM.mine.getTracks().forEach(t=>t.stop());CAM.mine=null;CAM.stream=null;CAM.spec=null;o.camUpdate();return}CAM.spec=sp;if(!(CAM.stream&&CAM.stream.active))camOwn(sp)};
+ const camWatch=()=>{clearTimeout(camWatch.t);camWatch.t=setTimeout(()=>{const v=o.h.querySelector('video[data-cam]');if(v&&CAM.spec&&!CAM.own&&(!CAM.stream||v.readyState<2))camOwn(CAM.spec)},2500)};
+ window.__dowCam=(st,sp)=>{if(CAM.mine&&CAM.mine!==st){CAM.mine.getTracks().forEach(t=>t.stop());CAM.mine=null}CAM.stream=st||null;CAM.spec=sp||null;o.camUpdate();camWatch()};
  let fsAt=0;
  const goFS=async()=>{if(document.fullscreenElement)return true;try{await document.documentElement.requestFullscreen();return true}catch(e){return false}};
  const fs=()=>document.fullscreenElement?document.exitFullscreen():goFS();
@@ -322,7 +485,30 @@ if(OUT){document.title='DOW Software — OUTPUT';const o=new Scr(document.body.a
  const upd=()=>{if(document.fullscreenElement)fsAt=Date.now();hint.style.opacity=document.fullscreenElement?'0':'1'};document.addEventListener('fullscreenchange',upd);
  addEventListener('pointerdown',()=>{if(!document.fullscreenElement)goFS()});addEventListener('keydown',()=>{if(!document.fullscreenElement)goFS()},true);
  document.documentElement.requestFullscreen().then(upd).catch(upd);
- addEventListener('pointerdown',()=>{if(o.mv&&S.vsound!==false)o.mv.muted=false});opener?.postMessage({ready:1},'*')}
+ addEventListener('pointerdown',()=>{const v=o.mv;if(v&&(v.dataset.cam?v.dataset.aud==='1':S.vsound!==false))v.muted=false});{const b2=('BroadcastChannel'in window)?new BroadcastChannel('dow-live'):null;if(b2){b2.onmessage=e=>{const d=e.data||{};if('al'in d)o.setAlerts(d.al)};b2.postMessage({hello:'out'})}}opener?.postMessage({ready:1},'*')}
+else if(STG){
+// ---------- STAGE / FOLDBACK DISPLAY (v1.12.0): for the worship leader or speaker — never shown to the congregation ----------
+document.title='DOW Software — STAGE';document.body.className='stg';
+const root=document.createElement('div');root.id='stg';
+root.innerHTML='<div id=sgf class=sgf></div><div class=sgt><div id=sgc class=sgc></div><div id=sgk class=sgk></div></div><div class=sgn id=sgn><div id=sgx class=sgx></div><div id=sgr class=sgr></div></div><div class=sgnx id=sgnx><b>NEXT</b><div id=sgnt></div></div><div id=sgm class=sgm></div><div id=sgh class=sgh>Double-click here (or press F) for fullscreen</div>';
+document.body.append(root);
+const g=i=>document.getElementById(i);let SG={al:null,st:{cur:null,nxt:null}},lastCur=null;
+const fitS=(el,box,max,min)=>{let f=max,n=0;el.style.fontSize=f+'px';while(f>min&&n++<70&&box.scrollHeight>box.clientHeight+1){f-=Math.max(2,f*.06);el.style.fontSize=f+'px'}};
+const drawS=()=>{const now=Date.now(),A=SG.al,toks=A?A.tok:[];
+ g('sgc').textContent=fmtClock(new Date(now),'12',false);
+ g('sgk').innerHTML=toks.filter(t=>t.stage).map(t=>'<span><small>'+esc(t.name)+'</small>'+esc(tokVal(t,now))+'</span>').join('');
+ const f=A&&A.fold,fb=g('sgf');
+ if(f){fb.style.cssText='display:block;font-size:'+(+f.sty.fs||60)+'px;color:'+(/^#[0-9a-f]{6}$/i.test(f.sty.col)?f.sty.col:'#000')+';background:'+hexA(f.sty.bg,f.sty.op)+';font-weight:'+(f.sty.bold?700:400);fb.textContent=alResolve(f.text,toks,now)}else fb.style.display='none';
+ const cur=SG.st.cur,txt=cur?cur.text:'';
+ if(txt!==lastCur){lastCur=txt;g('sgx').textContent=txt||'— blank —';g('sgx').style.opacity=txt?1:.35;g('sgr').textContent=(cur&&cur.ref)||'';fitS(g('sgx'),g('sgn'),Math.round(innerHeight*.16),16)}
+ const nx=SG.st.nxt,showNext=!A||!A.stg||A.stg.next!==false;g('sgnx').style.display=showNext&&nx?'block':'none';if(nx)g('sgnt').textContent=nx.text.slice(0,260);
+ const ms=(A&&A.items||[]).map(i=>alResolve(i.text,toks,now));g('sgm').textContent=ms.length?'ON THE SCREEN:  '+ms.join('   ·   '):''};
+if(!('BroadcastChannel'in window)){g('sgx').textContent='This browser cannot run the stage display (it needs BroadcastChannel). Use a current Chrome, Edge, Firefox or Safari.'}
+else{const b=new BroadcastChannel('dow-live');b.onmessage=e=>{const d=e.data||{};if('al'in d)SG.al=d.al;if('stage'in d&&d.stage)SG.st=d.stage;drawS()};b.postMessage({hello:'stage'})}
+const fsS=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{});
+addEventListener('dblclick',fsS);addEventListener('keydown',e=>{if(e.key=='f'||e.key=='F')fsS()});
+document.addEventListener('fullscreenchange',()=>{g('sgh').style.display=document.fullscreenElement?'none':''});
+addEventListener('resize',()=>{lastCur=null;drawS()});setInterval(drawS,1000);drawS()}
 else{
 // ---------- OPERATOR ----------
 const P=new Scr($('#pv')),L=new Scr($('#lv'));let muM='bg',win=null,bibles={},songs={},media={},pptxs={},customFonts={},slides=[],idx=-1,cur=null,tab='Bible',ver='',dock=JSON.parse(localStorage.getItem('dow.d')||'[]'),templates=JSON.parse(localStorage.getItem('dow.tpl')||'{}'),editing=(()=>{try{return JSON.parse(localStorage.getItem('dow.draft')||'null')}catch(e){return null}})();
@@ -522,7 +708,7 @@ async function parsePptx(file){
 
 const pv={sl:null,bg:null},lv={sl:null,bg:null};
 const send=m=>{try{win&&!win.closed&&win.postMessage(m,'*')}catch(e){}};
-addEventListener('message',e=>{if(e.data?.ready){send({s:S,sl:lv.sl,bg:lv.bg,tr:'cut',fontsCSS:fontsCSS()});try{win&&!win.closed&&win.postMessage({fs:1},{targetOrigin:'*',delegate:'fullscreen'})}catch(err){try{win.postMessage({fs:1},'*')}catch(e2){}}}});
+addEventListener('message',e=>{if(e.data?.ready){send({s:S,sl:lv.sl,bg:lv.bg,tr:'cut',fontsCSS:fontsCSS()});camPush();alSend();try{win&&!win.closed&&win.postMessage({fs:1},{targetOrigin:'*',delegate:'fullscreen'})}catch(err){try{win.postMessage({fs:1},'*')}catch(e2){}}}});
 const url=m=>m.u||(m.u=URL.createObjectURL(m.blob));
 const applyS=()=>{localStorage.setItem('dow.s',JSON.stringify(S));P.cfg(S);L.cfg(S);send({s:S,fontsCSS:fontsCSS()})};
 function take(){if(!pv.sl&&!pv.bg)return;lv.sl=pv.sl;lv.bg=pv.bg;L.setBg(lv.bg);L.show(lv.sl,S.tr);send({bg:lv.bg,sl:lv.sl,tr:S.tr});draw();if($('#ao').checked&&(!win||win.closed))openOut(true)}
@@ -530,8 +716,8 @@ function pick(i){if(i<0||i>=slides.length)return;idx=i;pv.sl=slides[i];P.show(pv
 function blank(){lv.sl=null;L.show(null,S.tr);send({sl:null,tr:S.tr});draw()}
 function load(sl,c){slides=sl;cur=c;pick(0)}
 function fitThumbs(){document.querySelectorAll('#sls .thi').forEach(e=>{const w=e.parentElement.clientWidth-4;if(w>0)e.style.transform=`scale(${w/1920})`})}
-function draw(){const rich=slides.length<=80;$('#sls').innerHTML=slides.map((s,i)=>{const cl=`${i==idx?'on':''} ${lv.sl===s?'lv':''}`;return rich&&s.kind==='pptx'&&s.v?`<div class="sc pp ${cl}" data-i="${i}" title="${esc(s.text).replace(/"/g,'&quot;')}"><div class="thi">${pxPaper(s)}</div><span class="nb">${i+1}</span></div>`:`<div class="sc ${cl}" data-i="${i}">${esc(s.text)}</div>`}).join('')||'<span style="color:#777">Load a verse or song…</span>';fitThumbs();
- $('#dk').innerHTML=dock.map((d,i)=>`<div class=it data-d="${i}"><span>${d.t=='b'?'📖':d.t=='s'?'♪':d.t=='o'?'🌐':'🖵'} ${esc(d.label)}</span><x data-x="${i}">✕</x></div>`).join('')||'<span style="color:#777">Empty — load something and press ＋ Dock</span>'}
+function draw(){nameLabels();stageSend();const rich=slides.length<=80;$('#sls').innerHTML=slides.map((s,i)=>{const cl=`${i==idx?'on':''} ${lv.sl===s?'lv':''}`;return rich&&s.kind==='pptx'&&s.v?`<div class="sc pp ${cl}" data-i="${i}" title="${esc(s.text).replace(/"/g,'&quot;')}"><div class="thi">${pxPaper(s)}</div><span class="nb">${i+1}</span></div>`:`<div class="sc ${cl}" data-i="${i}">${esc(s.text)}</div>`}).join('')||'<span style="color:#777">Load a verse or song…</span>';fitThumbs();
+ $('#dk').innerHTML=dock.map((d,i)=>`<div class=it data-d="${i}"><span>${d.t=='b'?'📖':d.t=='s'?'♪':d.t=='o'?'🌐':d.t=='c'?'📹':'🖵'} ${esc(d.label)}</span><x data-x="${i}">✕</x></div>`).join('')||'<span style="color:#777">Empty — load something and press ＋ Dock</span>'}
 try{new ResizeObserver(fitThumbs).observe($('#sls'))}catch(e){}
 // Bible
 const nz=s=>s.toLowerCase().replace(/[^a-z0-9]/g,'');
@@ -611,18 +797,19 @@ function qvFocus(){const i=$('#qv');i.focus();i.select()}
 function syncQV(){const s=$('#qvv'),vk=Object.keys(bibles),ov=onlVersList();s.innerHTML=vk.map(x=>`<option ${x==ver&&!onQ?'selected':''}>${esc(x)}</option>`).join('')+`<optgroup label="Online (live site)">${ov.map(x=>`<option value="🌐${esc(x)}" ${onQ&&ONL.ver==x?'selected':''}>🌐 ${esc(x)}</option>`).join('')}</optgroup>`;s.style.width='96px'}
 function quick(project){const q=$('#qv').value.trim();if(!q)return;qvSt('');
  if(onQ){if(!loadOnline(q,ONL.ver,m=>qvSt(m)))return}
- else if(!bible(q,ver,m=>qvSt(m)))return;
- if(project){if(lv.sl!==pv.sl)take();if(!win||win.closed)openOut()}
+ else{let why='';if(!bible(q,ver,m=>{why=m})){if(!bibleWordsFromQuick(q,why))qvSt(why);return}}
+ if(project){projectOut()}
  $('#qv').select()}
 // Songs
 function editSong(n){const x=songs[n];if(!x)return;editing={orig:n,name:n,text:x.text};tab='Songs';panel()}
 function song(n){const s=songs[n];if(s)load(s.text.replace(/\r/g,'').trim().split(/\n\s*\n/).map(t=>({text:t.trim(),ref:''})),{t:'s',name:n,label:n})}
 // Library panels
-function panel(){const p=$('#pn');$('.tabs').innerHTML=['Bible','Songs','Media','PPTX','Online'].map(t=>`<button class="${t==tab?'on':''}" data-t="${t}">${t}</button>`).join('');
+function panel(){const p=$('#pn');$('.tabs').innerHTML=['Bible','Songs','Media','PPTX','Online','Camera','Export','Alerts'].map(t=>`<button class="${t==tab?'on':''}" data-t="${t}">${t}</button>`).join('');
  if(tab=='Bible'){const vk=Object.keys(bibles);
   if(!vk.length){p.innerHTML=`<div class=row><button onclick="$('#bf').click()">Import Bible (.json / .ewb)</button><input id=bf type=file accept=".json,.ewb" multiple hidden></div><small style="color:#888">No Bible version loaded yet — import one to begin.</small>`;
    $('#bf').onchange=e=>importBibleFiles(e.target.files);return}
   p.innerHTML=`<div class=row><select id=bv style="flex:1">${vk.map(v=>`<option ${v==ver?'selected':''}>${esc(v)}</option>`).join('')}</select><button onclick="$('#bf').click()">Import .json / .ewb</button><input id=bf type=file accept=".json,.ewb" multiple hidden></div>
+  <div class=row><input id=bsq placeholder="🔍 Find verses by a word or phrase" autocomplete=off spellcheck=false><button id=bsx title="Clear search" style="display:none">✕</button></div><div id=bsr></div>
   <div class=row><select id=bb style="flex:2"></select><select id=bc style="width:66px"></select></div>
   <div class=row><input id=bva type=number min=1 placeholder="verse a" style="width:0;flex:1"><span style="align-self:center;color:#999">to</span><input id=bvb type=number min=1 placeholder="verse b" style="width:0;flex:1"></div>
   <div class=row><button class=go id=gb style="flex:1">Go</button></div>
@@ -632,7 +819,8 @@ function panel(){const p=$('#pn');$('.tabs').innerHTML=['Bible','Songs','Media',
    $('#bb').innerHTML=(ot.length?`<optgroup label="Old Testament">${opt(ot)}</optgroup>`:'')+(nt.length?`<optgroup label="New Testament">${opt(nt)}</optgroup>`:'')||opt(ks);fillChapters()};
   const fillChapters=()=>{const B=bibles[ver]||{},bk=$('#bb').value,ch=B[bk]?Object.keys(B[bk]).map(Number).sort((a,b)=>a-b):[];$('#bc').innerHTML=ch.map(c=>`<option>${c}</option>`).join('')};
   fillBooks();$('#bf').onchange=e=>importBibleFiles(e.target.files);
-  $('#bv').onchange=e=>{ver=e.target.value;fillBooks();syncQV()};$('#bb').onchange=fillChapters;
+  $('#bv').onchange=e=>{ver=e.target.value;fillBooks();syncQV();bibleResults()};$('#bb').onchange=fillChapters;
+  $('#bsq').value=bQ;$('#bsq').oninput=()=>{bQ=$('#bsq').value;clearTimeout(bT);bT=setTimeout(bibleResults,180)};$('#bsq').onkeydown=e=>{if(e.key=='Enter'){e.preventDefault();clearTimeout(bT);bibleResults()}else if(e.key=='Escape'){bQ='';$('#bsq').value='';bibleResults()}};$('#bsx').onclick=()=>{bQ='';$('#bsq').value='';bibleResults();$('#bsq').focus()};bibleResults();
   const go=()=>{const bk=$('#bb').value,c=$('#bc').value,a=$('#bva').value.trim(),z=$('#bvb').value.trim();if(!bk||!c)return;bible(`${bk} ${c}${a?':'+a+(z&&z!=a?'-'+z:''):''}`)};
   $('#gb').onclick=go;[$('#bva'),$('#bvb')].forEach(i=>{i.onkeydown=e=>{if(e.key=='Enter')go()}})}
  else if(tab=='Songs'){
@@ -651,12 +839,12 @@ function panel(){const p=$('#pn');$('.tabs').innerHTML=['Bible','Songs','Media',
    $('#sdl').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([$('#stx').value.replace(/\r/g,'').trim()+'\n'],{type:'text/plain'}));a.download=($('#sn').value.trim()||'song')+'.txt';a.click()};
    $('#scn').onclick=()=>{const o=songs[E.orig],dirty=(E.text||'').trim()!==(o?o.text:'').trim();if(dirty&&!confirm('Discard the unsaved lyrics?'))return;localStorage.removeItem('dow.draft');editing=null;panel()};
    (E.name?$('#stx'):$('#sn')).focus();return}
-  p.innerHTML=`<div class=row><input id=sq placeholder="Search songs"><button class=go id=snw title="Type lyrics from scratch">＋ New</button><button onclick="$('#sf').click()">Import .txt</button><input id=sf type=file accept=".txt" multiple hidden></div><div id=sl></div><small style="color:#888">Separate slides with a blank line. ＋ New lets you type lyrics from scratch; ✎ edits a saved song.</small>`;
-  const ls=()=>{$('#sl').innerHTML=Object.keys(songs).filter(n=>n.toLowerCase().includes($('#sq').value.toLowerCase())).sort().map(n=>`<div class=it data-s="${esc(n)}"><span>♪ ${esc(n)}</span><span class=acts><x class=ed data-es="${esc(n)}" title="Edit lyrics">✎</x><x data-ds="${esc(n)}" title="Delete">✕</x></span></div>`).join('')||'<span style="color:#777">No songs yet — press ＋ New to type one, or Import .txt.</span>'};ls();$('#sq').oninput=ls;
+  p.innerHTML=`<div class=row><input id=sq placeholder="Search by title or words in the lyrics"><button class=go id=snw title="Type lyrics from scratch">＋ New</button><button onclick="$('#sf').click()">Import .txt / .xml</button><input id=sf type=file accept=".txt,.xml" multiple hidden></div><div id=sl></div><small style="color:#888">Separate slides with a blank line. ＋ New lets you type lyrics from scratch; ✎ edits a saved song.</small>`;
+  const ls=()=>{const r=songSearch($('#sq').value);$('#sl').innerHTML=r.list.map(x=>`<div class=it data-s="${esc(x.n)}"${x.si!=null?` data-ms="${x.si}"`:''}><div style="min-width:0"><div>♪ ${r.toks.length?hl(x.n,r.toks):esc(x.n)}</div>${x.snip?`<div class=hit style="font-size:11px;color:#999;margin-top:2px;word-break:break-word">${x.snip}</div>`:''}</div><span class=acts><x class=ed data-es="${esc(x.n)}" title="Edit lyrics">✎</x><x data-ds="${esc(x.n)}" title="Delete">✕</x></span></div>`).join('')||(r.toks.length?'<span style="color:#777">No song title or lyric contains “'+esc($('#sq').value.trim())+'”.</span>':'<span style="color:#777">No songs yet — press ＋ New to type one, or Import .txt / .xml.</span>')};ls();$('#sq').oninput=ls;
   $('#snw').onclick=()=>{editing={orig:null,name:'',text:''};panel()};
-  $('#sf').onchange=async e=>{for(const f of e.target.files)await put('song',{name:f.name.replace(/\.txt$/i,''),text:await f.text()});await boot()}}
- else if(tab=='Media'){p.innerHTML=`<div class=row><select id=ma><option>Both</option><option>Preview</option><option>Live</option></select><select id=mu title="How a clicked image/video is used"><option value=bg>As background</option><option value=only>Project only (full screen)</option></select><button onclick="$('#mf').click()">Import</button><input id=mf type=file accept=".jpg,.jpeg,.png,.mp4,.webm,.wmv" multiple hidden></div><div class=mg><div class=mt data-m="" style="display:grid;place-items:center">None</div>${Object.values(media).map(m=>`<div class=mt data-m="${esc(m.name)}">${m.k=='v'?`<video src="${url(m)}" muted preload=metadata></video>`:`<img src="${url(m)}">`}<x data-dm="${esc(m.name)}">✕</x></div>`).join('')}</div><small style="color:#888">Note: browsers can't play .wmv reliably — convert to .mp4.</small>`;
-  $('#mu').value=muM;$('#mu').onchange=()=>muM=$('#mu').value;$('#mf').onchange=async e=>{for(const f of e.target.files)await put('media',{name:f.name,blob:f,k:/video|wmv/.test(f.type)||/\.(mp4|webm|wmv)$/i.test(f.name)?'v':'i'});await boot()}}
+  $('#sf').onchange=async e=>{const fl=[...e.target.files];e.target.value='';await importSongFiles(fl)}}
+ else if(tab=='Media')mediaPanel(p)
+
  else if(tab=='Online'){
   if(ONL.site=='yv'&&!ONL_YV[ONL.ver])ONL.ver='NIV';const ov=onlVersList();
   p.innerHTML=`<div class=row><select id=osite style=\"flex:1\"><option value=bg>BibleGateway.com</option><option value=yv>YouVersion (Bible.com)</option><option value=cu>Custom site…</option></select><select id=over style=\"width:84px\" title=\"Bible version code on that site\">${ov.map(x=>`<option ${x==ONL.ver?'selected':''}>${esc(x)}</option>`).join('')}</select></div>
@@ -670,12 +858,15 @@ function panel(){const p=$('#pn');$('.tabs').innerHTML=['Bible','Songs','Media',
   if($('#oref'))$('#oref').value=ONL.last||'';
   $('#osite').onchange=e=>{ONL.site=e.target.value;if(ONL.site=='yv'&&!ONL_YV[ONL.ver])ONL.ver='NIV';saveOnl();syncQV();panel()};$('#over').onchange=e=>{ONL.ver=e.target.value;onQ=true;saveOnl();syncQV()};
   $('#oz').onchange=e=>{ONL.z=+e.target.value;saveOnl();siteView()};$('#odk').checked=!!ONL.dk;$('#odk').onchange=e=>{ONL.dk=e.target.checked;saveOnl();siteView()};$('#opr').onchange=e=>{ONL.print=e.target.checked;saveOnl()};$('#ocu').oninput=e=>{ONL.custom=e.target.value;saveOnl()};
-  const go=proj=>{const r=$('#oref').value;ONL.last=r;saveOnl();onQ=true;syncQV();if(!loadOnline(r,ONL.ver))return;if(proj){if(lv.sl!==pv.sl)take();if(!win||win.closed)openOut()}};
+  const go=proj=>{const r=$('#oref').value;ONL.last=r;saveOnl();onQ=true;syncQV();if(!loadOnline(r,ONL.ver))return;if(proj){projectOut()}};
   $('#opv').onclick=()=>go(false);$('#opj').onclick=()=>go(true);$('#oref').onkeydown=e=>{if(e.key=='Enter'){e.preventDefault();go(e.shiftKey||e.ctrlKey)}};
   $('#onw').onclick=openSiteWindow;$('#ochk').onclick=()=>{const sl=onlineSlide($('#oref').value,ONL.ver);if(sl)open(sl.url,'_blank');else alert('Type a reference first (and, for a custom site, its address).')}}
+ else if(tab=='Camera'){if(!camListed){camListed=true;camList(false).then(()=>{if(tab=='Camera')panel()})}camPanel(p)}
+ else if(tab=='Export')exportPanel(p);
+ else if(tab=='Alerts')alertsPanel(p);
  else{p.innerHTML=`<div class=row><button onclick=\"$('#pf').click()\">Import .pptx</button><input id=pf type=file accept=".pptx" multiple hidden></div><div id=pl></div><small style="color:#888">Recreates each slide like PowerPoint shows it: theme colours and fonts, text boxes and bullets, cropped/bordered pictures, shapes, arrows and tables. Charts, SmartArt, animations and embedded fonts aren't carried over.</small>`;
   $('#pl').innerHTML=Object.keys(pptxs).sort().map(n=>`<div class=it data-p="${esc(n)}"><span>🖵 ${esc(n)}${(pptxs[n].slides[0]||{}).v>=2?'':' <small style="color:#e55" title="Imported by an older version — re-import this file (or use 🔄) so it looks exactly like PowerPoint">⟳ re-import</small>'}</span><x data-dp="${esc(n)}">✕</x></div>`).join('')||'<span style="color:#777">No presentations imported yet.</span>';
-  $('#pf').onchange=async e=>{if(typeof JSZip=='undefined'){alert('PPTX support needs an internet connection the first time (to load the unzip library). Try again while online.');e.target.value='';return}for(const f of e.target.files){try{const sl2=await parsePptx(f);if(sl2.length)await put('pptx',{name:f.name.replace(/\.pptx$/i,''),slides:sl2});else alert(f.name+': no slides found in this presentation.')}catch(err){console.error(err);alert('Could not read '+f.name+' — is it a valid .pptx file?')}}await boot()}}}
+  $('#pf').onchange=async e=>{if(typeof JSZip=='undefined'){alert('PPTX support needs an internet connection the first time (to load the unzip library). Try again while online.');e.target.value='';return}for(const f of e.target.files){try{const sl2=await parsePptx(f);if(sl2.length)await put('pptx',{name:f.name.replace(/\.pptx$/i,''),slides:sl2,file:f});else alert(f.name+': no slides found in this presentation.')}catch(err){console.error(err);alert('Could not read '+f.name+' — is it a valid .pptx file?')}}await boot()}}}
 let bibleSrc={};
 async function boot(){bibles={};bibleSrc={};(await all('bible')).forEach(b=>{bibles[b.name]=b.data;bibleSrc[b.name]={src:b.src||'',file:b.file||''}});
  if(!Object.keys(bibles).length){let d2=null,nm=null,src='json',file='niv.json';
@@ -694,7 +885,7 @@ async function githubSync(){const btn=$('#gsync');try{if(btn){btn.disabled=true;
  let files=null;for(const c of cands){try{const r=await fetch(`https://api.github.com/repos/${owner}/${c.repo}/contents/${c.dir}`);if(r.ok){const j=await r.json();if(Array.isArray(j)){files=j;break}}}catch(e){}}
  if(!files)return;
  const ewbBases=new Set(files.filter(f=>f.type==='file'&&/\.ewb$/i.test(f.name)).map(f=>f.name.replace(/\.ewb$/i,'').toUpperCase())),haveFile=new Set(Object.values(bibleSrc).filter(x=>x.src==='ewb'&&x.file).map(x=>x.file)),isEw=n=>(bibleSrc[n]||{}).src==='ewb';
- const haveB=new Set(Object.keys(bibles)),haveS=new Set(Object.keys(songs)),haveM=new Set(Object.keys(media)),haveP=new Set(Object.keys(pptxs).filter(n=>(pptxs[n].slides[0]||{}).v>=2));
+ const haveB=new Set(Object.keys(bibles)),haveS=new Set(Object.keys(songs)),haveM=new Set(Object.keys(media)),haveSF=new Set(Object.values(songs).map(x=>x.file).filter(Boolean)),haveP=new Set(Object.keys(pptxs).filter(n=>(pptxs[n].slides[0]||{}).v>=2));
  for(const f of files){if(f.type!=='file')continue;const name=f.name,low=name.toLowerCase();
   if(low==='index.html'||!f.download_url)continue;
   if(low.endsWith('.json')||low.endsWith('.ewb')){const isE=low.endsWith('.ewb'),base=name.replace(/\.(json|ewb)$/i,'').toUpperCase();
@@ -704,18 +895,425 @@ async function githubSync(){const btn=$('#gsync');try{if(btn){btn.disabled=true;
     else if(!haveB.has(nm)&&!isEw(nm)){await put('bible',{name:nm,data,src:'json',file:name});bibleSrc[nm]={src:'json',file:name};haveB.add(nm)}}catch(e){}}
   else if(/\.(jpe?g|png|mp4|webm|wmv)$/i.test(name)){if(haveM.has(name))continue;
    try{const blob=await(await fetch(f.download_url)).blob();await put('media',{name,blob,k:/\.(mp4|webm|wmv)$/i.test(name)?'v':'i'})}catch(e){}}
-  else if(low.endsWith('.pptx')){const base=name.replace(/\.pptx$/i,'');if(haveP.has(base)||typeof JSZip=='undefined')continue;
-   try{const blob=await(await fetch(f.download_url)).blob();const file=new File([blob],name);const sl2=await parsePptx(file);if(sl2.length)await put('pptx',{name:base,slides:sl2})}catch(e){}}
+  else if(low.endsWith('.pptx')){const base=name.replace(/\.pptx$/i,'');if(haveP.has(base)){const cur=pptxs[base];if(cur&&!cur.file){try{const blob=await(await fetch(f.download_url)).blob();await put('pptx',{...cur,file:blob});cur.file=blob}catch(e){}}continue}   // already imported: just keep its original file for Export
+   if(typeof JSZip=='undefined')continue;
+   try{const blob=await(await fetch(f.download_url)).blob();const file=new File([blob],name);const sl2=await parsePptx(file);if(sl2.length)await put('pptx',{name:base,slides:sl2,file:blob})}catch(e){}}
   else if(low.endsWith('.txt')){const base=name.replace(/\.txt$/i,'');if(haveS.has(base))continue;
-   try{const text=await(await fetch(f.download_url)).text();await put('song',{name:base,text})}catch(e){}}}
+   try{const text=await(await fetch(f.download_url)).text();await put('song',{name:base,text})}catch(e){}}
+  else if(low.endsWith('.xml')){if(haveSF.has(name))continue;      // already imported from this file
+   try{const sg=xmlSong(decodeText(await(await fetch(f.download_url)).arrayBuffer()),name.replace(/\.xml$/i,''));if(haveS.has(sg.name))continue;   // same title already saved (maybe edited) — leave it alone
+    await put('song',{name:sg.name,text:sg.text,file:name});haveS.add(sg.name);haveSF.add(name)}catch(e){}}}
  await boot()}catch(e){console.error('GitHub sync failed',e)}finally{if(btn){btn.disabled=false;btn.textContent='🔄'}}}
+// ---------- Live video source: camera / capture card (v1.10.0) ----------
+let camDevs={v:[],a:[]},camNote='',camListed=false;
+const camPref=(()=>{try{return JSON.parse(localStorage.getItem('dow.cam')||'{}')}catch(e){return{}}})();
+const camSave=()=>localStorage.setItem('dow.cam',JSON.stringify(camPref));
+const camErr=e=>{const n=e&&e.name;return n==='NotAllowedError'||n==='SecurityError'?'⚠ Access was blocked. Click the camera / lock icon in the address bar, allow the camera (and microphone, for sound) for this site, then try again.':n==='NotFoundError'||n==='OverconstrainedError'?'⚠ That device was not found — check the cable, then press 🔍 Find.':n==='NotReadableError'||n==='AbortError'?'⚠ The device is busy or not responding — close any other app that is using it (OBS, Zoom, the Camera app) and try again.':'⚠ Could not open the device'+(n?' ('+n+')':'')+'.'};
+const camLabel=()=>{const d=camDevs.v.find(x=>x.deviceId===camPref.id);return(d&&d.label)||camPref.label||'Camera'};
+async function camList(ask){
+ if(!(navigator.mediaDevices&&navigator.mediaDevices.enumerateDevices)){camNote='⚠ This browser cannot reach cameras here — open the app from its https:// address (or localhost).';return}
+ try{let ds=await navigator.mediaDevices.enumerateDevices();
+  if(ask&&!ds.some(d=>d.kind==='videoinput'&&d.label)){const t=await navigator.mediaDevices.getUserMedia({video:true});t.getTracks().forEach(x=>x.stop());ds=await navigator.mediaDevices.enumerateDevices()}   // throw-away stream: makes the browser ask permission so device names appear
+  camDevs={v:ds.filter(d=>d.kind==='videoinput'&&d.deviceId),a:ds.filter(d=>d.kind==='audioinput'&&d.deviceId)};
+  if(!camDevs.v.length||!camDevs.v.some(d=>d.label))camNote=ask?'No camera or video device found — plug it in and press 🔍 Find again.':'Press 🔍 Find and click Allow, so the browser can list your cameras and capture cards.';
+  else if(/^(No camera|Press)/.test(camNote))camNote=''}
+ catch(e){camNote=camErr(e)}}
+if(navigator.mediaDevices&&navigator.mediaDevices.addEventListener)navigator.mediaDevices.addEventListener('devicechange',async()=>{await camList(false);if(tab=='Camera')panel()});
+async function projectOut(){if(lv.sl!==pv.sl)take();while(opening)await new Promise(r=>setTimeout(r,60));if(!win||win.closed)openOut()}   // take live, then open the output window (waits for take()'s own auto-open attempt to finish)
+function camPush(){if(!win||win.closed)return;const st=CAM.stream,sp=CAM.spec;   // hand the running stream to the output window (same app) — else ask it to open the device itself
+ try{if(typeof win.__dowCam==='function'){win.__dowCam(st,sp);return}}catch(e){}
+ send({cam:st?sp:null})}
+const camRefresh=()=>{P.camUpdate();L.camUpdate();camPush();if(tab=='Camera')panel()};
+let camBusy=null;
+const camStart=()=>camBusy||(camBusy=camStart1().finally(()=>{camBusy=null}));   // a double-click never opens the device twice
+async function camStart1(){
+ const sp={id:camPref.id||'',aid:camPref.aid||'',res:camPref.res||'auto',aud:!!camPref.aud,mir:!!camPref.mir,label:camLabel(),alabel:(camDevs.a.find(d=>d.deviceId===camPref.aid)||{}).label||''};
+ if(!sp.id){camNote='Choose a camera first (press 🔍 Find if the list is empty).';if(tab=='Camera')panel();return false}
+ const c=CAM.spec,ok=CAM.stream&&CAM.stream.getVideoTracks().some(t=>t.readyState==='live');
+ if(ok&&c&&c.id===sp.id&&c.res===sp.res&&c.aud===sp.aud&&(c.aid||'')===sp.aid){CAM.spec=sp;return true}
+ if(CAM.stream)CAM.stream.getTracks().forEach(t=>t.stop());CAM.stream=null;CAM.spec=null;
+ try{const st=await camOpen(sp);CAM.stream=st;CAM.spec=sp;
+  st.getVideoTracks()[0].addEventListener('ended',()=>{if(CAM.stream!==st)return;CAM.stream=null;CAM.spec=null;camNote='⚠ The video source was disconnected.';camRefresh()});
+  camNote=sp.aud&&!st.getAudioTracks().length?'⚠ The picture is running, but the sound input could not be opened — pick another sound input.':'';
+  try{await camList(false)}catch(e){}   // device names are available now
+  camRefresh();return true}
+ catch(e){camNote=camErr(e);camRefresh();return false}}
+function camStop(){if(CAM.stream)CAM.stream.getTracks().forEach(t=>t.stop());CAM.stream=null;CAM.spec=null;camNote='Stopped — the device has been released.';camRefresh()}
+function camSlide(){const nm=camLabel();return{kind:'media',m:{k:'c',id:camPref.id,aud:!!camPref.aud,mir:!!camPref.mir,label:nm},text:'📹 '+nm,ref:'',name:nm}}
+async function camLoad(project){if(!await camStart())return;camPref.label=camLabel();camSave();const sl=camSlide();
+ load([sl],{t:'c',label:sl.name,id:camPref.id,aud:!!camPref.aud,mir:!!camPref.mir});
+ if(project)projectOut()}
+function camFromDock(d){camPref.id=d.id||camPref.id;camPref.aud=!!d.aud;camPref.mir=!!d.mir;camPref.label=String(d.label||'').replace(/^📹\s*/,'')||camPref.label;camSave();camLoad(false)}
+async function camBg(clear){const w=$('#cwh')?$('#cwh').value:'Preview';let b=null;
+ if(!clear){if(!await camStart())return;camPref.label=camLabel();camSave();b={u:'cam:'+camPref.id+(camPref.mir?':m':''),k:'c',mir:!!camPref.mir,n:camLabel()}}
+ if(w!='Live'){pv.bg=b;P.setBg(b)}if(w!='Preview'){lv.bg=b;L.setBg(b);send({bg:b})}}
+function camPanel(p){
+ const vd=camDevs.v,ad=camDevs.a,run=!!(CAM.stream&&CAM.stream.getVideoTracks().some(t=>t.readyState==='live'));
+ if(vd.length&&!vd.some(d=>d.deviceId===camPref.id)){camPref.id=vd[0].deviceId;camSave()}
+ const nm=d=>esc(d.label||('Device '+d.deviceId.slice(0,6)));let info;
+ if(run){const s=CAM.stream.getVideoTracks()[0].getSettings();info='<span style="color:#4c4">● Running</span> — '+esc(camLabel())+(s.width?' · '+s.width+'×'+s.height:'')+(s.frameRate?' · '+Math.round(s.frameRate)+' fps':'')+(CAM.stream.getAudioTracks().length?' · 🔊 sound input on':'')}
+ else info='○ Not running — press Preview or ⚡ Project to start it.';
+ p.innerHTML=`<div class=row><select id=cdv style="flex:1" title="Camera, USB/HDMI capture card, phone used as a webcam…">${vd.length?vd.map(d=>`<option value="${esc(d.deviceId)}"${d.deviceId===camPref.id?' selected':''}>${nm(d)}</option>`).join(''):'<option value="">— no device listed —</option>'}</select><button id=cfd title="Ask the browser for permission and list the connected cameras / capture cards">🔍 Find</button></div>
+ <video id=cvp muted autoplay playsinline style="width:100%;aspect-ratio:16/9;background:#000;border:1px solid var(--btnb);object-fit:contain;margin-bottom:6px"></video>
+ <div class=row><label style="color:#aaa;font-size:11px">Quality <select id=cres><option value=auto>Auto</option><option value=720>720p</option><option value=1080>1080p</option></select></label><label style="color:#aaa;font-size:11px"><input type=checkbox id=cmi> Mirror</label><label style="color:#aaa;font-size:11px" title="Plays the source's sound on the output screen. Careful: a microphone in the same room can cause feedback."><input type=checkbox id=cau> Sound on output</label></div>
+ <div class=row><select id=cad style="flex:1" title="Sound input — for a capture card this is usually a separate device"><option value="">Default sound input</option>${ad.map(d=>`<option value="${esc(d.deviceId)}">${nm(d)}</option>`).join('')}</select></div>
+ <div class=row><button id=cpv style="flex:1" title="Start the source and load it into Preview">Preview</button><button class=go id=cpj style="flex:1" title="Start the source, take it live and show it on the output screen">⚡ Project</button></div>
+ <div class=row><select id=cwh title="Which screen gets the background"><option>Preview</option><option>Live</option><option>Both</option></select><button id=cbg style="flex:1" title="Show the video behind lyrics and verses (use Dim bg % in Display Settings to darken it)">🖼 As background</button><button id=cnb title="Remove the background from the chosen screen(s)">✕</button></div>
+ <div class=row><button id=cst style="flex:1">■ Stop &amp; release device</button></div>
+ <small id=cms style="display:block;margin-bottom:6px;color:var(--s)">${info}${camNote?'<br>'+esc(camNote):''}</small>
+ <small style="color:#888">Works with webcams, USB/HDMI capture cards and phones used as webcams — anything your browser lists. The picture is shown full screen on the output (it follows Media fit and "Media fills whole display"). Space freezes / unfreezes it. Needs the app's https address and your permission to use the camera. Close other apps (OBS, Zoom) that may already be using the device.</small>`;
+ $('#cres').value=camPref.res||'auto';$('#cmi').checked=!!camPref.mir;$('#cau').checked=!!camPref.aud;$('#cad').value=camPref.aid||'';$('#cad').disabled=!camPref.aud;
+ $('#cdv').onchange=e=>{camPref.id=e.target.value;camPref.label=(vd.find(d=>d.deviceId===camPref.id)||{}).label||'';camSave()};
+ $('#cfd').onclick=async()=>{$('#cfd').disabled=true;await camList(true);panel()};
+ $('#cres').onchange=e=>{camPref.res=e.target.value;camSave()};$('#cmi').onchange=e=>{camPref.mir=e.target.checked;camSave()};
+ $('#cau').onchange=e=>{camPref.aud=e.target.checked;$('#cad').disabled=!camPref.aud;camSave()};$('#cad').onchange=e=>{camPref.aid=e.target.value;camSave()};
+ $('#cpv').onclick=()=>camLoad(false);$('#cpj').onclick=()=>camLoad(true);$('#cbg').onclick=()=>camBg(false);$('#cnb').onclick=()=>camBg(true);$('#cst').onclick=camStop;
+ const v=$('#cvp');if(CAM.stream){v.srcObject=CAM.stream;v.play().catch(()=>{})}}
+
+// ---------- Export: lyrics, Bible versions, PPTX decks (v1.10.0) ----------
+const xfn=s=>String(s).replace(/[\\/:*?"<>|\u0000-\u001f]+/g,'-').replace(/^[\s.]+|[\s.]+$/g,'')||'file';
+function xdl(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),120000)}
+const xsel={s:new Set(),b:new Set(),p:new Set()};let xZip=true,xMsg='',xBusy=false;
+async function exportItems(items,asZip){   // items: [{dir,name,blob}] -> one .zip, or one download each
+ if(items.length===1||!asZip||typeof JSZip=='undefined'){for(const it of items){xdl(it.blob,it.name);await new Promise(r=>setTimeout(r,450))}return}
+ const z=new JSZip(),seen=new Set();
+ for(const it of items){let pth=it.dir+'/'+it.name,k=1;while(seen.has(pth.toLowerCase()))pth=it.dir+'/'+it.name.replace(/(\.[^.]+)$/,' ('+(++k)+')$1');seen.add(pth.toLowerCase());z.file(pth,it.blob,{compression:/\.pptx$/i.test(it.name)?'STORE':'DEFLATE'})}
+ xdl(await z.generateAsync({type:'blob'}),'DOW-export-'+new Date().toISOString().slice(0,10)+'.zip')}
+async function xrun(all){if(xBusy)return;xBusy=true;xMsg='Preparing the files…';if(tab=='Export')panel();
+ try{const items=[],S_=all?Object.keys(songs):[...xsel.s].filter(n=>songs[n]),B_=all?Object.keys(bibles):[...xsel.b].filter(n=>bibles[n]),P0=all?Object.keys(pptxs):[...xsel.p].filter(n=>pptxs[n]),P_=P0.filter(n=>pptxs[n].file),skip=P0.length-P_.length;
+  for(const n of S_)items.push({dir:'Lyrics',name:xfn(n)+'.txt',blob:new Blob([String(songs[n].text).replace(/\r/g,'').trim()+'\n'],{type:'text/plain;charset=utf-8'})});
+  for(const n of B_)items.push({dir:'Bibles',name:xfn(n)+'.json',blob:new Blob([JSON.stringify(bibles[n])],{type:'application/json'})});
+  for(const n of P_)items.push({dir:'PPTX',name:xfn(n)+'.pptx',blob:pptxs[n].file});
+  if(!items.length){xMsg=skip?'Nothing to export yet — these decks were imported before v1.10.0, so no original file was kept. Re-import them (or press 🔄 for GitHub decks), then export.':'Tick something to export first.';return}
+  const zipped=xZip&&items.length>1&&typeof JSZip!='undefined';await exportItems(items,xZip);
+  xMsg='✓ Exported '+items.length+' item'+(items.length==1?'':'s')+(zipped?' as one .zip':'')+(skip?' · '+skip+' deck'+(skip==1?'':'s')+' skipped (no original saved yet)':'')+(xZip&&items.length>1&&!zipped?' · the zip library was not available, so the files were downloaded one by one':'')+'. Look in your Downloads folder.'}
+ catch(err){console.error(err);xMsg='⚠ Export failed: '+((err&&err.message)||err)}
+ finally{xBusy=false;if(tab=='Export')panel()}}
+function exportPanel(p){
+ const K={s:Object.keys(songs).sort(),b:Object.keys(bibles).sort(),p:Object.keys(pptxs).sort()},hasOrig=n=>!!(pptxs[n]&&pptxs[n].file);
+ for(const g in xsel)for(const n of[...xsel[g]])if(!K[g].includes(n)||(g==='p'&&!hasOrig(n)))xsel[g].delete(n);
+ const sec=(g,title,ext,off)=>`<div class=xh><span>${title} <small style="text-transform:none;letter-spacing:0;color:#888">${ext} · ${K[g].length}</small></span><span style="white-space:nowrap"><button data-xa="${g}" style="padding:1px 7px">All</button> <button data-xn="${g}" style="padding:1px 7px">None</button></span></div>`+(K[g].map((n,i)=>{const o=off&&off(n);return`<label class=xr${o?' style="opacity:.6"':''}><input type=checkbox data-xg="${g}" data-xi="${i}"${o?' disabled':xsel[g].has(n)?' checked':''}><span>${esc(n)}${o?` <small style="color:#e55">${o}</small>`:''}</span></label>`}).join('')||'<div style="color:#777;font-size:11px;padding:3px 2px">Nothing stored yet.</div>');
+ p.innerHTML=`<small style="color:#888">Saves what is stored in this app to your computer. Lyrics become .txt files (blank line = new slide) and Bible versions become .json files — both can be imported again. PPTX decks are saved as the original .pptx file (kept from v1.10.0 on). Bible texts stay under their publisher's copyright — keep exports within your licence.</small>`
+  +sec('s','♪ Lyrics','.txt')+sec('b','📖 Bible versions','.json')+sec('p','🖵 PPTX decks','.pptx',n=>hasOrig(n)?'':'re-import once to enable')
+  +`<div class=row style="margin-top:10px"><label style="color:#aaa;font-size:11px"><input type=checkbox id=xzip> Pack everything into one .zip</label></div><div class=row><button class=go id=xgo style="flex:1"></button><button id=xall title="Export every lyric, Bible version and PPTX deck as a backup" style="flex:1">📦 Backup everything</button></div><small id=xst style="display:block;color:var(--s)"></small>`;
+ const cnt=()=>{const b=$('#xgo'),c=xsel.s.size+xsel.b.size+xsel.p.size;b.textContent='⬇ Export selected ('+c+')';b.disabled=xBusy||!c;$('#xall').disabled=xBusy};cnt();
+ $('#xzip').checked=xZip;$('#xzip').onchange=e=>{xZip=e.target.checked};$('#xst').textContent=xMsg;
+ p.querySelectorAll('[data-xg]').forEach(c=>c.onchange=()=>{const g=c.dataset.xg,nm=K[g][+c.dataset.xi];c.checked?xsel[g].add(nm):xsel[g].delete(nm);cnt()});
+ p.querySelectorAll('[data-xa]').forEach(b=>b.onclick=()=>{const g=b.dataset.xa;K[g].forEach(nm=>{if(g!=='p'||hasOrig(nm))xsel[g].add(nm)});exportPanel(p)});
+ p.querySelectorAll('[data-xn]').forEach(b=>b.onclick=()=>{xsel[b.dataset.xn].clear();exportPanel(p)});
+ $('#xgo').onclick=()=>xrun(false);$('#xall').onclick=()=>xrun(true)}
+// ---------- Search (v1.11.0): songs by their lyrics, scriptures by words / phrases ----------
+// Matching ignores capitals, accents and punctuation; every typed word must START a word in the text, so partial words
+// work while typing ("lov" finds love, loved, lovingkindness). Several words = all of them, in any order; a run of words
+// that appears exactly as typed is listed first.
+const sn=s=>String(s??'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/['’‘`]/g,'').replace(/[^\p{L}\p{N}]+/gu,' ').trim();
+function hl(t,toks){t=String(t);if(!toks||!toks.length)return esc(t);let re;
+ try{re=new RegExp('(^|[^\\p{L}\\p{N}])('+toks.map(x=>x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')','giu')}catch(e){return esc(t)}
+ let o='',i=0,m;while((m=re.exec(t))){const s=m.index+m[1].length;o+=esc(t.slice(i,s))+'<mark>'+esc(m[2])+'</mark>';i=s+m[2].length;if(!m[0].length)re.lastIndex++}
+ return o+esc(t.slice(i))}
+const songIdx=new WeakMap();
+function songInfo(s){let x=songIdx.get(s);if(x)return x;
+ const sl=String(s.text||'').replace(/\r/g,'').trim().split(/\n\s*\n/).map(t=>t.trim()).filter(Boolean);
+ x={sl:sl.map(t=>({t,n:' '+sn(t)})),all:' '+sn(s.text),title:' '+sn(s.name)};songIdx.set(s,x);return x}
+function songSearch(q){const toks=sn(q).split(' ').filter(Boolean),names=Object.keys(songs).sort((a,b)=>a.localeCompare(b));
+ if(!toks.length)return{toks,list:names.map(n=>({n}))};
+ const ph=' '+toks.join(' '),list=[];
+ for(const n of names){const x=songInfo(songs[n]),inT=toks.every(t=>x.title.includes(' '+t)),hasP=x.all.includes(ph),pool=x.all+x.title;
+  if(!inT&&!toks.every(t=>pool.includes(' '+t)))continue;
+  let best=-1,bs=0;x.sl.forEach((sl,i)=>{const sc=(sl.n.includes(ph)?100:0)+toks.filter(t=>sl.n.includes(' '+t)).length;if(sc>bs){bs=sc;best=i}});   // slide that matches best
+  let si=null,snip='';
+  if(best>=0){si=best;const lines=x.sl[best].t.split('\n');let bl=lines[0],bsc=-1;
+   for(const l of lines){const ln=' '+sn(l),sc=(ln.includes(ph)?100:0)+toks.filter(t=>ln.includes(' '+t)).length;if(sc>bsc){bsc=sc;bl=l}}
+   bl=bl.trim();snip=hl(bl.slice(0,140),toks)+(bl.length>140?'…':'')}
+  list.push({n,si,snip,r:inT?0:hasP?1:2})}
+ list.sort((a,b)=>a.r-b.r);return{toks,list}}
+const bIdx=new WeakMap();
+function bibleIndex(v){const B=bibles[v];if(!B)return[];let x=bIdx.get(B);if(x)return x;x=[];
+ for(const bk of Object.keys(B))for(const c of Object.keys(B[bk]))for(const vs of Object.keys(B[bk][c])){const t=String(B[bk][c][vs]);x.push({bk,c,v:vs,t,n:' '+sn(t)})}
+ bIdx.set(B,x);return x}
+function bibleSearch(q,v){const toks=sn(q).split(' ').filter(Boolean);if(!toks.length)return null;
+ const ph=' '+toks.join(' '),a=[],b=[];
+ for(const e of bibleIndex(v)){if(e.n.includes(ph))a.push(e);else if(toks.length>1&&toks.every(t=>e.n.includes(' '+t)))b.push(e)}
+ return{toks,hits:a.concat(b),exact:a.length}}
+let bQ='',bT=0;
+function loadVerse(e,mode){   // mode: 0 = this verse into Preview · 1 = project it · 2 = whole chapter, positioned on this verse
+ const ref=e.bk+' '+e.c+':'+e.v,lab=ref+' ('+ver+')';
+ if(mode===2&&bible(e.bk+' '+e.c,ver,()=>{})){const i=slides.findIndex(s=>s.ref===lab);if(i>=0)pick(i);return}
+ load([{text:e.t.replace(/([,:])"(?=[A-Za-z])/g,'$1 "'),ref:lab}],{t:'b',v:ver,ref,label:lab});if(mode===1)projectOut()}
+function bibleResults(){const box=$('#bsr');if(!box)return;const q=bQ.trim(),x=$('#bsx');if(x)x.style.display=q?'':'none';
+ if(!q){box.innerHTML='';return}
+ const r=bibleSearch(q,ver);if(!r){box.innerHTML='<small style="color:#888">Type a word or phrase.</small>';return}
+ const LIM=250,hits=r.hits,show=hits.slice(0,LIM);
+ let info=hits.length?hits.length+' verse'+(hits.length==1?'':'s')+' in '+esc(ver)+(r.toks.length>1&&r.exact&&r.exact<hits.length?' — the first '+r.exact+' contain the exact phrase':''):'No verse in '+esc(ver)+' contains “'+esc(q)+'”.';
+ if(hits.length>LIM)info+=' · showing the first '+LIM+' — add more words to narrow it down';
+ box.innerHTML='<small style="color:#aaa;display:block;margin:2px 0 4px">'+info+'</small>'+(show.length?'<div class=bres>'+show.map((e,i)=>`<div class="it hit" data-bi="${i}" title="Click: load into Preview · Shift+click: whole chapter from this verse · ⚡: project now"><div style="min-width:0"><b style="color:var(--g)">${esc(e.bk)} ${esc(e.c)}:${esc(e.v)}</b> ${hl(e.t,r.toks)}</div><x data-bj="${i}" title="Project now">⚡</x></div>`).join('')+'</div>':'');
+ box.onclick=ev=>{const j=ev.target.closest('[data-bj]'),b=ev.target.closest('[data-bi]');if(!b)return;const e=show[+b.dataset.bi];loadVerse(e,j?1:ev.shiftKey?2:0)}}
+// when the Quick Verse text is not a scripture reference, treat it as words to find
+function bibleWordsFromQuick(q,why){if(!/^(Try e\.g\.|Book not found)/.test(why))return false;const r=bibleSearch(q,ver);if(!r||!r.hits.length)return false;
+ bQ=q;tab='Bible';panel();const b=$('#bsr');if(b)b.scrollIntoView({block:'nearest'});
+ qvSt('🔍 '+r.hits.length+(r.hits.length==1?' verse contains':' verses contain')+' “'+q+'” — pick one in the Bible tab (Shift+click = whole chapter, ⚡ = project)');return true}
+
+// ---------- Media tab (v1.11.0): images and animated clips apart, names visible, animated thumbnails ----------
+let MAN=localStorage.getItem('dow.man')||'hover',mediaIO=null;
+const fmtSize=b=>b>=1048576?(b/1048576).toFixed(1)+' MB':Math.max(1,Math.round(b/1024))+' KB';
+const fmtDur=d=>{if(!isFinite(d))return'';d=Math.round(d);return Math.floor(d/60)+':'+String(d%60).padStart(2,'0')};
+function mediaPanel(p){
+ const ms=Object.values(media).sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:'base'})),imgs=ms.filter(m=>m.k!='v'),vids=ms.filter(m=>m.k=='v');
+ const tile=m=>`<div class="mt${m.k=='v'?' vt':''}" data-m="${esc(m.name)}" title="${esc(m.name)}"><${m.k=='v'?`video src="${url(m)}#t=0.1" muted loop playsinline preload=metadata></video><span class=dur></span>`:`img src="${url(m)}" loading=lazy>`}<span class=cap>${esc(m.name)}</span><x data-dm="${esc(m.name)}" title="Delete">✕</x></div>`;
+ const grid=(a,none)=>`<div class=mg>${a.map(tile).join('')||`<small style="color:#777;grid-column:1/-1">${none}</small>`}</div>`;
+ p.innerHTML=`<div class=row><select id=ma><option>Both</option><option>Preview</option><option>Live</option></select><select id=mu title="How a clicked image/video is used"><option value=bg>As background</option><option value=only>Project only (full screen)</option></select><button onclick="$('#mf').click()">Import</button><input id=mf type=file accept=".jpg,.jpeg,.png,.mp4,.webm,.wmv" multiple hidden></div>
+ <div class=row><label style="color:#aaa;font-size:11px" title="Whether the clip thumbnails move. 'Always playing' uses more processor power when you have many clips.">Clip thumbnails <select id=man><option value=hover>Play on hover</option><option value=always>Always playing</option><option value=off>Still</option></select></label></div>
+ <div class=mg><div class=mt data-m="" style="display:grid;place-items:center;aspect-ratio:auto;padding:7px;grid-column:1/-1">None (clear background)</div></div>
+ <div class=mh><span>🖼 Images</span><small>${imgs.length}</small></div>${grid(imgs,'No images yet — press Import.')}
+ <div class=mh><span>🎞 Animated clips</span><small>${vids.length}</small></div>${grid(vids,'No animated clips yet — press Import.')}
+ <small style="color:#888;display:block;margin-top:8px">Hover a tile (or look at its caption) to see the file name; the tooltip also shows length, size and resolution. Note: browsers can't play .wmv reliably — convert to .mp4.</small>`;
+ $('#mu').value=muM;$('#mu').onchange=()=>muM=$('#mu').value;
+ $('#mf').onchange=async e=>{for(const f of e.target.files)await put('media',{name:f.name,blob:f,k:/video|wmv/.test(f.type)||/\.(mp4|webm|wmv)$/i.test(f.name)?'v':'i'});await boot()};
+ $('#man').value=MAN;$('#man').onchange=e=>{MAN=e.target.value;localStorage.setItem('dow.man',MAN);panel()};
+ if(mediaIO){mediaIO.disconnect();mediaIO=null}
+ if(MAN=='always'&&'IntersectionObserver'in window)mediaIO=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.play().catch(()=>{});else e.target.pause()}),{threshold:.1});
+ p.querySelectorAll('.mt[data-m]').forEach(t=>{const m=media[t.dataset.m];if(!m)return;const v=t.querySelector('video'),im=t.querySelector('img'),
+   tip=a=>{t.title=m.name+'\n'+a.filter(Boolean).join(' · ')};
+  if(v){v.onloadedmetadata=()=>{if(v.paused&&v.currentTime<0.05){try{v.currentTime=0.1}catch(e){}}   // show the first frame as the still thumbnail
+   const d=fmtDur(v.duration),dd=t.querySelector('.dur');if(dd)dd.textContent=d;tip(['🎞 '+d,v.videoWidth+'×'+v.videoHeight,fmtSize(m.blob.size)])};
+   if(MAN=='hover'){t.onmouseenter=()=>{v.play().catch(()=>{})};t.onmouseleave=()=>{v.pause();v.currentTime=0.1}}
+   else if(MAN=='always'){if(mediaIO)mediaIO.observe(v);else v.play().catch(()=>{})}}
+  else if(im)im.onload=()=>tip(['🖼 '+im.naturalWidth+'×'+im.naturalHeight,fmtSize(m.blob.size)])})}
+const nameOfSt=st=>{const a=[];if(st.sl&&st.sl.kind==='media')a.push((st.sl.m.k=='v'?'🎞 ':st.sl.m.k=='c'?'📹 ':'🖼 ')+(st.sl.name||''));if(st.bg&&st.bg.n)a.push('bg: '+st.bg.n);return a.join(' · ')};
+function nameLabels(){const a=$('#pvn'),b=$('#lvn');if(a){a.textContent=nameOfSt(pv);a.title=a.textContent}if(b){b.textContent=nameOfSt(lv);b.title=b.textContent}}
+// ---------- Alerts (v1.12.0): message · nursery · foldback · tokens ----------
+const AL_POS=[['top','Top bar'],['bottom','Bottom bar'],['tl','Top-left box'],['tr','Top-right box'],['bl','Bottom-left box'],['br','Bottom-right box']];
+const AL_DEF=()=>({
+ msgTpl:[{n:'Welcome',t:'Welcome! We are glad you are here today.'},{n:'Silence phones',t:'Please silence your mobile phones.'}],
+ foldTpl:[{n:'Time check',t:'Time check: {{Clock}}'}],
+ nurTpl:'Nursery — child number(s): {{numbers}}',
+ sty:{msg:{pos:'bottom',fs:46,col:'#ffffff',bg:'#000000',op:78,bold:true,anim:'static',spd:'med',hold:0},
+      nur:{pos:'tr',fs:54,col:'#000000',bg:'#C9932E',op:96,bold:true,anim:'static',spd:'med',hold:0},
+      fold:{pos:'top',fs:60,col:'#000000',bg:'#FFD54A',op:100,bold:true,anim:'static',spd:'med',hold:0}},
+ tok:[{id:'tclock',name:'Clock',type:'clock',fmt:'12',sec:false,stage:false}],
+ auto:{show:10,gap:20},stage:{next:true}});
+function alLoad(){const d=AL_DEF();let s={};try{s=JSON.parse(localStorage.getItem('dow.al')||'{}')||{}}catch(e){}
+ const o={...d,...s},ss=s.sty||{};o.sty={msg:{...d.sty.msg,...ss.msg},nur:{...d.sty.nur,...ss.nur},fold:{...d.sty.fold,...ss.fold}};o.auto={...d.auto,...s.auto};o.stage={...d.stage,...s.stage};
+ for(const k of['msgTpl','foldTpl','tok'])if(!Array.isArray(o[k]))o[k]=d[k];return o}
+let AL=alLoad();
+const alSave=()=>localStorage.setItem('dow.al',JSON.stringify(AL));
+const AS={msg:null,nur:[],fold:null,rev:1,auto:{on:false,t:0,i:0}};   // what is showing right now (not saved: alerts start clear)
+const bc=('BroadcastChannel'in window)?new BroadcastChannel('dow-live'):null;   // reaches the output window and the stage display
+const bcSend=m=>{if(bc)bc.postMessage(m);else send(m)};
+const ea=s=>esc(s).replace(/"/g,'&quot;'),alId=()=>'t'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const alShort=(s,n=34)=>{s=String(s).replace(/\s+/g,' ');return s.length>n?s.slice(0,n-1)+'…':s};
+function stageState(){const c=lv.sl,i=c?slides.indexOf(c):-1,n=i>=0?slides[i+1]:null;
+ const nm=s=>!s?null:s.kind==='media'?{text:(s.m.k=='v'?'🎞 ':s.m.k=='c'?'📹 ':'🖼 ')+(s.name||''),ref:''}:s.kind==='site'?{text:'🌐 '+(s.label||''),ref:''}:{text:String(s.text||''),ref:s.ref||''};
+ return{cur:nm(c),nxt:nm(n)}}
+const stageSend=()=>{if(bc)bc.postMessage({stage:stageState()})};
+function alSnap(){const items=[];
+ if(AS.msg)items.push({k:'msg',text:AS.msg.text,sty:AL.sty.msg});
+ if(AS.nur.length)items.push({k:'nur',text:AL.nurTpl.replace(/\{\{\s*numbers\s*\}\}/gi,AS.nur.map(n=>n.v).join(', ')),sty:AL.sty.nur});
+ return{rev:AS.rev,tok:AL.tok,items,fold:AS.fold?{text:AS.fold.text,sty:AL.sty.fold}:null,stg:{next:AL.stage.next!==false}}}
+function alSend(){const s=alSnap();L.setAlerts(s);bcSend({al:s});stageSend()}
+function alChanged(){AS.rev++;alSend();alUI()}
+// --- showing / clearing
+function alShowMsg(text,auto){text=String(text||'').trim();if(!text)return;AS.msg={text,ts:Date.now(),auto:!!auto};alChanged()}
+function alClearMsg(){if(!AS.msg)return;AS.msg=null;alChanged()}
+function alAddNur(v){let any=false;for(const x of String(v||'').split(/[\s,;]+/).map(s=>s.trim().slice(0,12)).filter(Boolean)){const o=AS.nur.find(n=>n.v===x);if(o)o.ts=Date.now();else AS.nur.push({v:x,ts:Date.now()});any=true}if(any)alChanged()}
+function alDelNur(v){const k=AS.nur.length;AS.nur=AS.nur.filter(n=>n.v!==v);if(AS.nur.length!==k)alChanged()}
+function alShowFold(text){text=String(text||'').trim();if(!text)return;AS.fold={text,ts:Date.now()};alChanged()}
+function alClearFold(){if(!AS.fold)return;AS.fold=null;alChanged()}
+function alClearAll(){alAutoStop(true);AS.msg=null;AS.nur=[];AS.fold=null;alChanged()}
+// --- auto-display / rotate: the ticked messages are shown one after another
+function alAutoStart(){if(!AL.msgTpl.some(t=>t.a)){alert('Tick ☑ at least one saved message first.');return}AS.auto.on=true;AS.auto.i=0;alAutoStep();alUI()}
+function alAutoStep(){clearTimeout(AS.auto.t);if(!AS.auto.on)return;const list=AL.msgTpl.filter(t=>t.a);if(!list.length){alAutoStop();return}
+ const t=list[AS.auto.i++%list.length];alShowMsg(t.t,true);
+ AS.auto.t=setTimeout(()=>{if(!AS.auto.on)return;if(AS.msg&&AS.msg.auto)alClearMsg();AS.auto.t=setTimeout(alAutoStep,Math.max(1,AL.auto.gap)*1000)},Math.max(1,AL.auto.show)*1000)}
+function alAutoStop(silent){const was=AS.auto.on;AS.auto.on=false;clearTimeout(AS.auto.t);if(AS.msg&&AS.msg.auto){AS.msg=null;if(!silent)alChanged();return}if(was&&!silent)alUI()}
+// --- timed hide ("Hide after … s") and live token read-outs
+function alTick(){const now=Date.now();let ch=false;
+ const hm=+AL.sty.msg.hold;if(AS.msg&&hm>0&&!AS.msg.auto&&now-AS.msg.ts>=hm*1000){AS.msg=null;ch=true}
+ const hn=+AL.sty.nur.hold;if(hn>0){const k=AS.nur.length;AS.nur=AS.nur.filter(n=>now-n.ts<hn*1000);if(AS.nur.length!==k)ch=true}
+ const hf=+AL.sty.fold.hold;if(AS.fold&&hf>0&&now-AS.fold.ts>=hf*1000){AS.fold=null;ch=true}
+ if(ch)alChanged();if(tab=='Alerts'&&alSub=='tok')alTokView()}
+// --- tokens
+function alTokAdd(o){const name=String(o.name||'').replace(/[{}"'<>]/g,'').trim().slice(0,30);if(!name)return'Give the token a name.';
+ if(AL.tok.some(t=>t.name.toLowerCase()===name.toLowerCase())||['time','time24','date','numbers'].includes(name.toLowerCase()))return'A token called “'+name+'” already exists.';
+ const t=alCleanTok({...o,name});if(!t)return'That token could not be created.';AL.tok.push(t);alSave();alChanged();return''}
+function alTokCtl(id,act){const t=AL.tok.find(x=>x.id===id);if(!t)return;const now=Date.now();
+ if(t.type==='cdd'){const r=t.run=t.run||{running:false,rem:t.dur*1000};
+  if(act==='start'&&!r.running){if(!(r.rem>0))r.rem=t.dur*1000;r.running=true;r.end=now+r.rem}else if(act==='pause'&&r.running){r.rem=Math.max(0,r.end-now);r.running=false}else if(act==='reset'){r.running=false;r.rem=t.dur*1000}}
+ else if(t.type==='tmr'){const r=t.run=t.run||{running:false,base:0};
+  if(act==='start'&&!r.running){r.running=true;r.start=now}else if(act==='pause'&&r.running){r.base=(r.base||0)+now-r.start;r.running=false}else if(act==='reset'){r.running=false;r.base=0}}
+ alSave();alChanged();alTokView()}
+function alTokView(){const now=Date.now();document.querySelectorAll('[data-tv]').forEach(e=>{const t=AL.tok.find(x=>x.id===e.dataset.tv);if(t)e.textContent=tokVal(t,now)})}
+const hexOk=(v,d)=>/^#[0-9a-f]{6}$/i.test(v)?v:d;
+function alCleanSty(s,d){s=s||{};return{pos:AL_POS.some(p=>p[0]===s.pos)?s.pos:d.pos,fs:Math.min(160,Math.max(16,+s.fs||d.fs)),col:hexOk(s.col,d.col),bg:hexOk(s.bg,d.bg),op:Math.min(100,Math.max(10,+s.op||d.op)),bold:s.bold===undefined?d.bold:!!s.bold,anim:s.anim==='crawl'?'crawl':'static',spd:['slow','med','fast'].includes(s.spd)?s.spd:'med',hold:Math.min(3600,Math.max(0,+s.hold||0))}}
+function alCleanTok(t){if(!t||typeof t!=='object')return null;const name=String(t.name||'').replace(/[{}"'<>]/g,'').trim().slice(0,30),type=t.type;if(!name||!['clock','cdt','cdd','tmr'].includes(type))return null;
+ const o={id:alId(),name,type,stage:!!t.stage};
+ if(type==='clock'){o.fmt=t.fmt==='24'?'24':'12';o.sec=!!t.sec}
+ if(type==='cdt'){o.at=/^\d{1,2}:\d{2}$/.test(t.at)?t.at:'09:00';o.done=String(t.done||'').slice(0,40)}
+ if(type==='cdd'){o.dur=Math.min(36000,Math.max(1,+t.dur||600));o.done=String(t.done||'').slice(0,40);o.run={running:false,rem:o.dur*1000}}
+ if(type==='tmr')o.run={running:false,base:0};
+ return o}
+// --- stage display window
+let swin=null;
+function openStage(){if(!bc){osSet('⚠ The stage display needs a current browser (Chrome, Edge, Firefox or Safari).');return}
+ swin=open(location.pathname+'#stage','dow-stage','popup=yes,width=1100,height=640');
+ if(!swin){osSet('⚠ Pop-up blocked — allow pop-ups for this site, then press 🎤 Stage again.');return}
+ osSet('✓ Stage display opened — drag it to the stage monitor, then double-click it (or press F) for fullscreen.');setTimeout(alSend,700)}
+// --- quick strip (always visible under the controls)
+function alUI(){const a=$('#alm');if(!a)return;
+ const keep=(s,i)=>{const v=s.value;s.innerHTML=i;if([...s.options].some(o=>o.value===v))s.value=v};
+ keep(a,AL.msgTpl.map((t,i)=>`<option value="${i}">${esc(alShort(t.n,22))}</option>`).join('')||'<option value="">(no saved messages)</option>');
+ keep($('#alf'),AL.foldTpl.map((t,i)=>`<option value="${i}">${esc(alShort(t.n,22))}</option>`).join('')||'<option value="">(no saved messages)</option>');
+ const c=[];
+ if(AS.msg)c.push(`<span class=chip title="${ea(AS.msg.text)}">💬 ${esc(alShort(AS.msg.text))} <x data-cx=msg title="Remove">✕</x></span>`);
+ for(const n of AS.nur)c.push(`<span class=chip>👶 ${esc(n.v)} <x data-cn="${ea(n.v)}" title="Remove this number">✕</x></span>`);
+ if(AS.fold)c.push(`<span class=chip title="${ea(AS.fold.text)}">🎤 ${esc(alShort(AS.fold.text))} <x data-cx=fold title="Remove">✕</x></span>`);
+ if(AS.auto.on)c.push('<span class=chip>🔁 Auto-display running <x data-cx=auto title="Stop">■</x></span>');
+ $('#alchips').innerHTML=c.join('')||'<small style="color:#777">No alerts showing.</small>';
+ alRefreshTab()}
+function alRefreshTab(){const b=$('#aau');if(b)b.textContent=AS.auto.on?'■ Stop auto-display':'▶ Start auto-display';
+ const c=$('#anch');if(c)c.innerHTML=AS.nur.map(n=>`<span class=chip>${esc(n.v)} <x data-cn="${ea(n.v)}" title="Remove this number">✕</x></span>`).join('')||'<small style="color:#777">No numbers showing.</small>'}
+// --- Alerts tab
+let alSub='msg';const alDraft={msg:'',fold:'',mn:'',fn:''};
+const insertAt=(ta,s)=>{const a=ta.selectionStart??ta.value.length,b=ta.selectionEnd??a;ta.value=ta.value.slice(0,a)+s+ta.value.slice(b);ta.selectionStart=ta.selectionEnd=a+s.length;ta.focus()};
+const tokOpts=()=>'<option value="">Insert token…</option>'+['time','time24','date'].concat(AL.tok.map(t=>t.name)).map(n=>`<option value="${ea(n)}">{{${esc(n)}}}</option>`).join('');
+function alStyleHTML(k){const s=AL.sty[k],f=k==='fold';
+ return `<details style="margin-top:8px"><summary>APPEARANCE</summary><div class=f>
+ ${f?'':`<label>Position<select data-as2="${k}.pos">${AL_POS.map(([v,l])=>`<option value=${v}${s.pos==v?' selected':''}>${l}</option>`).join('')}</select></label>`}
+ <label>Size px<input type=number min=16 max=160 data-as2="${k}.fs" value="${s.fs}"></label>
+ <label>Text colour<input type=color data-as2="${k}.col" value="${s.col}"></label>
+ <label>Background<input type=color data-as2="${k}.bg" value="${s.bg}"></label>
+ <label>Opacity %<input type=number min=10 max=100 data-as2="${k}.op" value="${s.op}"></label>
+ <label>Hide after (s, 0 = stay)<input type=number min=0 max=3600 data-as2="${k}.hold" value="${s.hold}"></label>
+ <label><input type=checkbox data-as2="${k}.bold"${s.bold?' checked':''}> Bold</label>
+ ${k==='msg'?`<label>Motion<select data-as2="msg.anim"><option value=static${s.anim=='static'?' selected':''}>Still</option><option value=crawl${s.anim=='crawl'?' selected':''}>Scrolling (bars only)</option></select></label><label>Scroll speed<select data-as2="msg.spd">${[['slow','Slow'],['med','Medium'],['fast','Fast']].map(([v,l])=>`<option value=${v}${s.spd==v?' selected':''}>${l}</option>`).join('')}</select></label>`:''}
+ </div></details>`}
+function alMsgHTML(){const a=AL.auto;
+ return `<textarea id=amt placeholder="Message for the congregation screen. Tokens such as {{Clock}} stay live." style="width:100%;height:74px;resize:vertical"></textarea>
+ <div class=row><button class=go id=ams style="flex:1">💬 Show on screen</button><button id=amc>■ Clear</button></div>
+ <div class=row><select id=amtk>${tokOpts()}</select><input id=amn placeholder="Template name" style="flex:1"><button id=amsv title="Save this message as a template">💾 Save</button></div>
+ <div class=xh><span>Saved messages</span><small style="text-transform:none;letter-spacing:0;color:#888">☑ = auto-display</small></div>
+ ${AL.msgTpl.map((t,i)=>`<div class=it data-mi="${i}" title="Click to edit · ⚡ show now"><span style="min-width:0"><label title="Include in auto-display / rotate"><input type=checkbox data-ma="${i}"${t.a?' checked':''}></label> <b>${esc(t.n)}</b><div style="font-size:11px;color:#999;word-break:break-word">${esc(alShort(t.t,90))}</div></span><span class=acts><x data-msh="${i}" title="Show now">⚡</x><x data-mdl="${i}" title="Delete">✕</x></span></div>`).join('')||'<div style="color:#777;font-size:11px">No saved messages yet.</div>'}
+ <div class=xh><span>Auto-display / rotate</span></div>
+ <div class=f><label>Show for (s)<input type=number min=1 max=3600 id=aas value="${a.show}"></label><label>Wait between (s)<input type=number min=1 max=3600 id=aag value="${a.gap}"></label></div>
+ <div class=row style="margin-top:6px"><button id=aau style="flex:1"></button></div>
+ <small style="color:#888">The ☑ messages are shown one after another (rotate). Tick just one to repeat it every “wait” seconds.</small>
+ ${alStyleHTML('msg')}`}
+function alNurHTML(){return `<div class=row><input id=anm placeholder="Child number, e.g. 12" inputmode=numeric style="flex:1"><button class=go id=ana>👶 Show</button></div>
+ <div id=anch></div>
+ <div class=row style="margin-top:6px"><button id=anc style="flex:1">■ Clear nursery alert</button></div>
+ <div class=xh><span>On-screen wording</span></div><input id=ant style="width:100%">
+ <small style="color:#888">{{numbers}} becomes the list of child numbers. Add several at once by separating them with spaces or commas; ✕ removes one. Keep it short and discreet — parents only need to spot their number. Press <b>N</b> anywhere to jump to the quick nursery box.</small>
+ ${alStyleHTML('nur')}`}
+function alFoldHTML(){return `<div class=row><button id=afo style="flex:1">🎤 Open stage display</button><label style="color:#aaa;font-size:11px"><input type=checkbox id=afn> Show next slide</label></div>
+ <textarea id=aft placeholder="Message for the stage display only (worship leader / speaker)" style="width:100%;height:64px;resize:vertical"></textarea>
+ <div class=row><button class=go id=afs style="flex:1">🎤 Send to stage</button><button id=afc>■ Clear</button></div>
+ <div class=row><select id=aftk>${tokOpts()}</select><input id=afnm placeholder="Template name" style="flex:1"><button id=afsv>💾 Save</button></div>
+ <div class=xh><span>Saved foldback messages</span></div>
+ ${AL.foldTpl.map((t,i)=>`<div class=it data-fi="${i}" title="Click to edit · ⚡ send now"><span style="min-width:0"><b>${esc(t.n)}</b><div style="font-size:11px;color:#999;word-break:break-word">${esc(alShort(t.t,90))}</div></span><span class=acts><x data-fsh="${i}" title="Send now">⚡</x><x data-fdl="${i}" title="Delete">✕</x></span></div>`).join('')||'<div style="color:#777;font-size:11px">No saved messages yet.</div>'}
+ <small style="color:#888;display:block;margin-top:6px">Foldback alerts appear only on the stage display — never on the congregation screen. The stage display also shows the live slide, the next slide, the clock and any token you mark 🎤.</small>
+ ${alStyleHTML('fold')}`}
+const TOK_LBL={clock:'Clock',cdt:'Countdown to a time',cdd:'Countdown',tmr:'Timer'};
+function alTokHTML(){return `<div class=xh><span>Tokens</span></div>
+ ${AL.tok.map(t=>`<div class=it><span style="min-width:0"><b>${esc(t.name)}</b> <small style="color:#888">${TOK_LBL[t.type]}${t.type=='cdt'?' · '+esc(t.at):t.type=='cdd'?' · '+Math.round(t.dur/60*10)/10+' min':''}</small><div style="color:var(--g);font-size:16px" data-tv="${ea(t.id)}"></div></span><span class=acts>${t.type=='cdd'||t.type=='tmr'?`<x data-tc="start" data-tid="${ea(t.id)}" title="Start">▶</x><x data-tc="pause" data-tid="${ea(t.id)}" title="Pause">⏸</x><x data-tc="reset" data-tid="${ea(t.id)}" title="Reset">↺</x>`:''}<label title="Show on the stage display"><input type=checkbox data-tg="${ea(t.id)}"${t.stage?' checked':''}>🎤</label><x data-tdl="${ea(t.id)}" title="Delete">✕</x></span></div>`).join('')||'<div style="color:#777;font-size:11px">No tokens yet.</div>'}
+ <div class=xh><span>New token</span></div>
+ <div class=row><input id=atn placeholder="Name, e.g. Service starts in" style="flex:1"><select id=att><option value=clock>Clock</option><option value=cdt>Countdown to a time</option><option value=cdd>Countdown from a length of time</option><option value=tmr>Timer (counts up)</option></select></div>
+ <div class=row data-tt="clock"><select id=atf><option value=12>12-hour</option><option value=24>24-hour</option></select><label style="color:#aaa;font-size:11px"><input type=checkbox id=ats> show seconds</label></div>
+ <div class=row data-tt="cdt" style="display:none"><label style="color:#aaa;font-size:11px">Count down to <input type=time id=ata value="09:30"></label></div>
+ <div class=row data-tt="cdd" style="display:none"><label style="color:#aaa;font-size:11px">Minutes <input type=number id=atm min=1 max=600 value=10 style="width:80px"></label></div>
+ <div class=row data-tt="cdt cdd" style="display:none"><input id=atd placeholder="Text to show at zero (optional), e.g. Starting now" style="flex:1"></div>
+ <div class=row><label style="color:#aaa;font-size:11px"><input type=checkbox id=atg> Show on the stage display</label><button class=go id=ata2 style="margin-left:auto">＋ Add token</button></div>
+ <small id=atmsg style="color:#e55;display:block"></small>
+ <small style="color:#888">Type a token into any alert as <b>{{Name}}</b>, e.g. “Service starts in {{Service starts in}}”. Always available: {{time}} {{time24}} {{date}}. Start / pause / reset countdowns and timers here; they keep running if you reload the page.</small>`}
+function alertsPanel(p){
+ const subs=[['msg','💬 Message'],['nur','👶 Nursery'],['fold','🎤 Foldback'],['tok','⏱ Tokens']];
+ p.innerHTML=`<div class=stabs>${subs.map(([k,l])=>`<button data-as="${k}" class="${k==alSub?'on':''}">${l}</button>`).join('')}</div>${alSub=='msg'?alMsgHTML():alSub=='nur'?alNurHTML():alSub=='fold'?alFoldHTML():alTokHTML()}
+ <div class=xh><span>Templates</span></div><div class=row><button id=atex style="flex:1">⬇ Export templates</button><button id=atim style="flex:1">⬆ Import templates</button></div>
+ <small style="color:#888">Alerts appear on the Live screen and the output window straight away. Template files carry your saved display templates and your alert messages, tokens and appearance to another device or browser.</small>`;
+ p.querySelectorAll('[data-as]').forEach(b=>b.onclick=()=>{alSub=b.dataset.as;alertsPanel(p)});
+ $('#atex').onclick=tplExport;$('#atim').onclick=()=>$('#tpif').click();
+ p.querySelectorAll('[data-as2]').forEach(i=>{const[k,f]=i.dataset.as2.split('.');i.oninput=()=>{AL.sty[k][f]=i.type=='checkbox'?i.checked:i.type=='number'?+i.value:i.value;alSave();alChanged()}});
+ if(alSub=='msg'){const ta=$('#amt');ta.value=alDraft.msg;ta.oninput=()=>{alDraft.msg=ta.value};$('#amn').value=alDraft.mn;$('#amn').oninput=e=>{alDraft.mn=e.target.value};
+  $('#ams').onclick=()=>alShowMsg(ta.value);$('#amc').onclick=alClearMsg;
+  $('#amtk').onchange=e=>{const v=e.target.value;if(v){insertAt(ta,'{{'+v+'}}');alDraft.msg=ta.value}e.target.value=''};
+  $('#amsv').onclick=()=>{const n=$('#amn').value.trim().slice(0,60),t=ta.value.trim();if(!n||!t){alert('Give the template a name and some text first.');return}
+   const i=AL.msgTpl.findIndex(x=>x.n===n);if(i>=0)AL.msgTpl[i].t=t;else AL.msgTpl.push({n,t});alSave();alDraft.mn='';alUI();alertsPanel(p)};
+  p.querySelectorAll('[data-mi]').forEach(r=>r.onclick=e=>{const i=+r.dataset.mi,t=AL.msgTpl[i];if(!t)return;
+   if(e.target.closest('[data-msh]')){alShowMsg(t.t);return}
+   if(e.target.closest('[data-mdl]')){if(confirm('Delete the saved message “'+t.n+'”?')){AL.msgTpl.splice(i,1);alSave();alUI();alertsPanel(p)}return}
+   if(e.target.closest('[data-ma]')){t.a=e.target.closest('[data-ma]').checked;alSave();return}
+   if(e.target.closest('label'))return;
+   ta.value=t.t;alDraft.msg=t.t;$('#amn').value=t.n;alDraft.mn=t.n;ta.focus()});
+  $('#aas').oninput=e=>{AL.auto.show=Math.max(1,+e.target.value||10);alSave()};$('#aag').oninput=e=>{AL.auto.gap=Math.max(1,+e.target.value||20);alSave()};
+  $('#aau').onclick=()=>AS.auto.on?alAutoStop():alAutoStart()}
+ else if(alSub=='nur'){$('#ant').value=AL.nurTpl;$('#ant').oninput=e=>{AL.nurTpl=e.target.value;alSave();alChanged()};
+  const add=()=>{alAddNur($('#anm').value);$('#anm').value='';$('#anm').focus()};$('#ana').onclick=add;$('#anm').onkeydown=e=>{if(e.key=='Enter'){e.preventDefault();add()}};
+  $('#anc').onclick=()=>{AS.nur=[];alChanged()};$('#anch').onclick=e=>{const x=e.target.closest('[data-cn]');if(x)alDelNur(x.dataset.cn)}}
+ else if(alSub=='fold'){const ta=$('#aft');ta.value=alDraft.fold;ta.oninput=()=>{alDraft.fold=ta.value};$('#afnm').value=alDraft.fn;$('#afnm').oninput=e=>{alDraft.fn=e.target.value};
+  $('#afn').checked=AL.stage.next!==false;$('#afn').onchange=e=>{AL.stage.next=e.target.checked;alSave();alSend()};$('#afo').onclick=openStage;
+  $('#afs').onclick=()=>alShowFold(ta.value);$('#afc').onclick=alClearFold;
+  $('#aftk').onchange=e=>{const v=e.target.value;if(v){insertAt(ta,'{{'+v+'}}');alDraft.fold=ta.value}e.target.value=''};
+  $('#afsv').onclick=()=>{const n=$('#afnm').value.trim().slice(0,60),t=ta.value.trim();if(!n||!t){alert('Give the template a name and some text first.');return}
+   const i=AL.foldTpl.findIndex(x=>x.n===n);if(i>=0)AL.foldTpl[i].t=t;else AL.foldTpl.push({n,t});alSave();alDraft.fn='';alUI();alertsPanel(p)};
+  p.querySelectorAll('[data-fi]').forEach(r=>r.onclick=e=>{const i=+r.dataset.fi,t=AL.foldTpl[i];if(!t)return;
+   if(e.target.closest('[data-fsh]')){alShowFold(t.t);return}
+   if(e.target.closest('[data-fdl]')){if(confirm('Delete the saved message “'+t.n+'”?')){AL.foldTpl.splice(i,1);alSave();alUI();alertsPanel(p)}return}
+   ta.value=t.t;alDraft.fold=t.t;$('#afnm').value=t.n;alDraft.fn=t.n;ta.focus()})}
+ else{const vis=()=>{const ty=$('#att').value;p.querySelectorAll('[data-tt]').forEach(r=>{r.style.display=r.dataset.tt.split(' ').includes(ty)?'':'none'})};$('#att').onchange=vis;vis();
+  $('#ata2').onclick=()=>{const ty=$('#att').value,m=alTokAdd({name:$('#atn').value,type:ty,fmt:$('#atf').value,sec:$('#ats').checked,at:$('#ata').value,dur:(+$('#atm').value||10)*60,done:$('#atd').value,stage:$('#atg').checked});
+   if(m){$('#atmsg').textContent=m;return}alertsPanel(p)};
+  p.querySelectorAll('[data-tc]').forEach(x=>x.onclick=()=>alTokCtl(x.dataset.tid,x.dataset.tc));
+  p.querySelectorAll('[data-tdl]').forEach(x=>x.onclick=()=>{const t=AL.tok.find(y=>y.id===x.dataset.tdl);if(t&&confirm('Delete the token “'+t.name+'”?')){AL.tok=AL.tok.filter(y=>y!==t);alSave();alChanged();alertsPanel(p)}});
+  p.querySelectorAll('[data-tg]').forEach(x=>x.onchange=()=>{const t=AL.tok.find(y=>y.id===x.dataset.tg);if(t){t.stage=x.checked;alSave();alChanged()}});alTokView()}
+ alRefreshTab()}
+// ---------- saved templates: export / import (display templates + alert templates, tokens and appearance) ----------
+function tplFontsUsed(tpls){const names=new Set();for(const t of Object.values(tpls))for(const m of String(t&&t.ff||'').match(/'([^']+)'|"([^"]+)"/g)||[])names.add(m.slice(1,-1));return[...names].filter(n=>customFonts[n])}
+function tplExport(){
+ const fonts=tplFontsUsed(templates).map(n=>({name:n,data:customFonts[n]}));
+ const alerts={msgTpl:AL.msgTpl,foldTpl:AL.foldTpl,nurTpl:AL.nurTpl,sty:AL.sty,auto:AL.auto,stage:AL.stage,tok:AL.tok.map(t=>{const{run,...r}=t;return r})};
+ const out={app:'DOW Software',kind:'templates',v:1,exported:new Date().toISOString(),display:templates,alerts,fonts};
+ xdl(new Blob([JSON.stringify(out,null,1)],{type:'application/json'}),'DOW-templates-'+new Date().toISOString().slice(0,10)+'.json');
+ const n=Object.keys(templates).length+AL.msgTpl.length+AL.foldTpl.length;osSet('✓ Exported '+Object.keys(templates).length+' display template'+(Object.keys(templates).length==1?'':'s')+' and '+(AL.msgTpl.length+AL.foldTpl.length)+' alert message'+(AL.msgTpl.length+AL.foldTpl.length==1?'':'s')+', '+AL.tok.length+' token'+(AL.tok.length==1?'':'s')+(fonts.length?' and '+fonts.length+' font'+(fonts.length==1?'':'s'):'')+'.')}
+const canon=o=>JSON.stringify(Object.keys(o).sort().map(k=>[k,o[k]]));   // same content = same, whatever the order of the fields
+const tplMerge=(cur,inc)=>{const r={add:0,ren:0,skip:0};for(const t of inc||[]){if(!t||typeof t.n!=='string'||typeof t.t!=='string')continue;const n=t.n.slice(0,60),x=cur.find(c=>c.n===n);
+  if(!x){cur.push({n,t:t.t.slice(0,600),a:!!t.a});r.add++}else if(x.t===t.t)r.skip++;else{let k=2,nn=n;while(cur.some(c=>c.n===nn))nn=n+' ('+(k++)+')';cur.push({n:nn,t:t.t.slice(0,600),a:!!t.a});r.ren++}}return r};
+async function tplImport(file){let j;
+ try{j=JSON.parse(await file.text())}catch(e){alert('That file could not be read — it is not a DOW templates file.');return}
+ if(!j||j.kind!=='templates'||(typeof j.display!=='object'&&typeof j.alerts!=='object')){alert('That is not a DOW templates file (export one from the Templates section first).');return}
+ const R={d:{add:0,ren:0,skip:0},m:{add:0,ren:0,skip:0},f:{add:0,ren:0,skip:0},t:{add:0,ren:0,skip:0},fonts:0};let sty=false;
+ for(const[n0,t]of Object.entries(j.display&&typeof j.display==='object'?j.display:{})){if(!t||typeof t!=='object'||Array.isArray(t))continue;const n=String(n0).slice(0,60);
+  if(!(n in templates)){templates[n]=t;R.d.add++}else if(canon(templates[n])===canon(t))R.d.skip++;else{let k=2,nn=n;while(nn in templates)nn=n+' ('+(k++)+')';templates[nn]=t;R.d.ren++}}
+ localStorage.setItem('dow.tpl',JSON.stringify(templates));renderTemplates();
+ const A=j.alerts;
+ if(A&&typeof A==='object'){R.m=tplMerge(AL.msgTpl,A.msgTpl);R.f=tplMerge(AL.foldTpl,A.foldTpl);
+  for(const t0 of Array.isArray(A.tok)?A.tok:[]){const t=alCleanTok(t0);if(!t)continue;const x=AL.tok.find(y=>y.name.toLowerCase()===t.name.toLowerCase());
+   if(!x){AL.tok.push(t);R.t.add++}else{const a={...x},b={...t};for(const o of[a,b]){delete o.id;delete o.run}if(canon(a)===canon(b))R.t.skip++;else{let k=2,nn=t.name;while(AL.tok.some(y=>y.name.toLowerCase()===nn.toLowerCase()))nn=t.name+' '+k++;t.name=nn;AL.tok.push(t);R.t.ren++}}}
+  if((A.sty||typeof A.nurTpl==='string')&&confirm('This file also contains alert appearance (positions, colours, sizes and the nursery wording).\n\nOK = replace this device\u2019s alert appearance with it\nCancel = keep yours')){
+   const d=AL_DEF();for(const k of['msg','nur','fold'])AL.sty[k]=alCleanSty((A.sty||{})[k],d.sty[k]);if(typeof A.nurTpl==='string')AL.nurTpl=A.nurTpl.slice(0,200);
+   if(A.auto){AL.auto={show:Math.min(3600,Math.max(1,+A.auto.show||10)),gap:Math.min(3600,Math.max(1,+A.auto.gap||20))}}if(A.stage)AL.stage={next:A.stage.next!==false};sty=true}
+  alSave();alChanged()}
+ for(const f of Array.isArray(j.fonts)?j.fonts:[]){if(f&&typeof f.name==='string'&&typeof f.data==='string'&&/^data:/.test(f.data)&&!customFonts[f.name]){customFonts[f.name]=f.data;await put('font',{name:f.name,data:f.data});R.fonts++}}
+ if(R.fonts){injectFonts();renderFontSelect();applyS()}
+ if(tab=='Alerts')alertsPanel($('#pn'));
+ const line=(l,r)=>r.add+r.ren+r.skip?`• ${l}: ${r.add} added${r.ren?`, ${r.ren} renamed because the name was already in use`:''}${r.skip?`, ${r.skip} already identical`:''}`:'';
+ alert(['Templates imported.',line('Display templates',R.d),line('Alert messages',{add:R.m.add+R.f.add,ren:R.m.ren+R.f.ren,skip:R.m.skip+R.f.skip}),line('Tokens',R.t),sty?'• Alert appearance replaced':'',R.fonts?`• ${R.fonts} font${R.fonts==1?'':'s'} added`:''].filter(Boolean).join('\n'))}
+function alInit(){
+ if(bc)bc.onmessage=e=>{const d=e.data||{};if(d.hello)alSend()};
+ const add=()=>{alAddNur($('#aln').value);$('#aln').value=''};
+ $('#aln').onkeydown=e=>{if(e.key=='Enter'){e.preventDefault();add()}else if(e.key=='Escape')e.target.blur()};$('#alna').onclick=add;
+ $('#alms').onclick=()=>{const t=AL.msgTpl[+$('#alm').value];if(t)alShowMsg(t.t)};
+ $('#alfs').onclick=()=>{const t=AL.foldTpl[+$('#alf').value];if(t)alShowFold(t.t)};
+ $('#alca').onclick=alClearAll;
+ $('#alchips').onclick=e=>{const x=e.target.closest('[data-cx],[data-cn]');if(!x)return;if(x.dataset.cn!==undefined)alDelNur(x.dataset.cn);else if(x.dataset.cx=='msg'){AS.auto.on&&AS.msg&&AS.msg.auto?alAutoStop():alClearMsg()}else if(x.dataset.cx=='fold')alClearFold();else if(x.dataset.cx=='auto')alAutoStop()};
+ $('#tpex').onclick=tplExport;$('#tpim').onclick=()=>$('#tpif').click();$('#tpif').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(f)await tplImport(f)};
+ $('#opst').onclick=openStage;
+ setInterval(alTick,1000);alUI();L.setAlerts(alSnap())}
 // events
 document.addEventListener('click',e=>{const t=e.target,g=a=>t.closest(`[${a}]`)?.getAttribute(a);
- if(g('data-t')){tab=g('data-t');panel()}else if(t.dataset.ds){if(confirm('Delete "'+t.dataset.ds+'"?'))del('song',t.dataset.ds).then(boot)}else if(t.dataset.es){editSong(t.dataset.es)}else if(g('data-s')!==null&&g('data-s')!==undefined)song(g('data-s'));
- else if(t.dataset.dm){del('media',t.dataset.dm).then(boot)}else if(g('data-m')!==null&&g('data-m')!==undefined){const m=media[g('data-m')],b=m?{u:url(m),k:m.k}:null,w=$('#ma').value;if(muM=='only'){const sl=b?{kind:'media',m:b,text:'',name:m.name}:null;if(w!='Live'){pv.sl=sl;P.show(sl,'cut')}if(w!='Preview'){lv.sl=sl;L.show(sl,S.tr);send({sl,tr:S.tr})}draw()}else{if(w!='Live'){pv.bg=b;P.setBg(b)}if(w!='Preview'){lv.bg=b;L.setBg(b);send({bg:b})}}}
+ if(g('data-t')){tab=g('data-t');panel()}else if(t.dataset.ds){if(confirm('Delete "'+t.dataset.ds+'"?'))del('song',t.dataset.ds).then(boot)}else if(t.dataset.es){editSong(t.dataset.es)}else if(g('data-s')!==null&&g('data-s')!==undefined){song(g('data-s'));const ms=g('data-ms');if(ms!=null)pick(+ms)}
+ else if(t.dataset.dm){del('media',t.dataset.dm).then(boot)}else if(g('data-m')!==null&&g('data-m')!==undefined){const m=media[g('data-m')],b=m?{u:url(m),k:m.k,n:m.name}:null,w=$('#ma').value;if(muM=='only'){const sl=b?{kind:'media',m:b,text:(m.k=='v'?'🎞 ':'🖼 ')+m.name,name:m.name}:null;if(w!='Live'){pv.sl=sl;P.show(sl,'cut')}if(w!='Preview'){lv.sl=sl;L.show(sl,S.tr);send({sl,tr:S.tr})}draw()}else{if(w!='Live'){pv.bg=b;P.setBg(b)}if(w!='Preview'){lv.bg=b;L.setBg(b);send({bg:b})}draw()}}
  else if(t.dataset.dp){del('pptx',t.dataset.dp).then(boot)}else if(g('data-p')!==null&&g('data-p')!==undefined)pptxLoad(g('data-p'));
  else if(t.dataset.dtp){delete templates[t.dataset.dtp];localStorage.setItem('dow.tpl',JSON.stringify(templates));renderTemplates()}else if(g('data-tp')!==null&&g('data-tp')!==undefined)applyTemplate(g('data-tp'));
- else if(g('data-i')!==null&&g('data-i')!==undefined)pick(+g('data-i'));else if(t.dataset.x){dock.splice(+t.dataset.x,1);sv()}else if(g('data-d')!==null&&g('data-d')!==undefined){const d=dock[+g('data-d')];d.t=='b'?bible(d.ref,d.v):d.t=='s'?song(d.name):d.t=='o'?loadOnline(d.ref,d.v):pptxLoad(d.name)}});
+ else if(g('data-i')!==null&&g('data-i')!==undefined)pick(+g('data-i'));else if(t.dataset.x){dock.splice(+t.dataset.x,1);sv()}else if(g('data-d')!==null&&g('data-d')!==undefined){const d=dock[+g('data-d')];d.t=='b'?bible(d.ref,d.v):d.t=='s'?song(d.name):d.t=='o'?loadOnline(d.ref,d.v):d.t=='c'?camFromDock(d):pptxLoad(d.name)}});
 const sv=()=>{localStorage.setItem('dow.d',JSON.stringify(dock));draw()};
 $('#ad').onclick=()=>{if(cur){dock.push(cur);sv()}};$('#tk').onclick=take;$('#bl').onclick=blank;$('#pr').onclick=()=>pick(idx-1);$('#nx').onclick=()=>pick(idx+1);
 $('#tr').value=S.tr;$('#tr').onchange=e=>{S.tr=e.target.value;applyS()};
@@ -723,7 +1321,7 @@ addEventListener('keydown',e=>{
  if(((e.ctrlKey||e.metaKey)&&e.code=='KeyK')||(e.altKey&&e.code=='KeyV')){e.preventDefault();qvFocus();return}
  if(/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)||e.ctrlKey||e.metaKey||e.altKey)return;const k=e.key;
  if(k=='ArrowRight')pick(idx+1);else if(k=='ArrowLeft')pick(idx-1);else if(k=='Enter')take();else if(k=='b'||k=='B')blank();
- else if(k=='/'){e.preventDefault();qvFocus()}else if(k=='o'||k=='O')openOut();else if(k=='d'||k=='D'){const a=$('#au');a.checked=!a.checked}else if(k==' '){e.preventDefault();if(L.mv){L.toggleMedia();send({mc:1})}else P.toggleMedia()}});
+ else if(k=='/'){e.preventDefault();qvFocus()}else if(k=='n'||k=='N'){e.preventDefault();$('#aln').focus()}else if(k=='o'||k=='O')openOut();else if(k=='d'||k=='D'){const a=$('#au');a.checked=!a.checked}else if(k==' '){e.preventDefault();if(L.mv){L.toggleMedia();send({mc:1})}else P.toggleMedia()}});
 let opening=false,scInfo={n:0,err:''};
 const osSet=m=>{const e=$('#os');if(e)e.textContent=m||''};
 async function secondScreen(){
@@ -736,7 +1334,7 @@ async function openOut(auto){if(opening)return;opening=true;try{
  if(auto===true&&!r.multi){osSet(scInfo.err?'⚠ Could not check for a 2nd screen ('+scInfo.err+'). Allow "Window management" for this site (lock icon → Site settings), or press 🖥 Open Output.':'Only one screen found — press 🖥 Open Output if you want the output window anyway.');return}
  let f='popup=yes,width=1280,height=720';const sc=r.sc;if(sc)f=`popup=yes,left=${sc.availLeft},top=${sc.availTop},width=${sc.availWidth},height=${sc.availHeight}`;
  win=open(location.pathname+'#out','dow-out',f);
- if(win){setTimeout(()=>send({s:S,sl:lv.sl,bg:lv.bg,tr:'cut',fontsCSS:fontsCSS()}),800);osSet(r.multi?'✓ Output sent to the 2nd screen'+(r.guess?' (position guessed)':''):'Output opened — no 2nd screen found, so it is on this screen.')}
+ if(win){setTimeout(()=>{send({s:S,sl:lv.sl,bg:lv.bg,tr:'cut',fontsCSS:fontsCSS()});camPush();alSend()},800);osSet(r.multi?'✓ Output sent to the 2nd screen'+(r.guess?' (position guessed)':''):'Output opened — no 2nd screen found, so it is on this screen.')}
  else osSet('⚠ Pop-up blocked — allow pop-ups for this site (icon in the address bar), then press 🖥 Open Output.')}finally{opening=false}}
 async function detectScreens(){try{let st='unknown';for(const nm of['window-management','window-placement']){try{st=(await navigator.permissions.query({name:nm})).state;break}catch(e){}}
  if(st==='granted'){const r=await secondScreen();osSet(r.multi?'✓ 2nd screen detected — TAKE LIVE will open the output on it.':'Only one screen detected right now.')}
@@ -762,5 +1360,5 @@ const setTheme=t=>{document.body.classList.toggle('light',t=='light');localStora
 setTheme(localStorage.getItem('dow.theme')||'dark');
 $('#th').onclick=()=>setTheme(document.body.classList.contains('light')?'dark':'light');
 $('#gsync').onclick=()=>githubSync();
-P.cfg(S);L.cfg(S);detectScreens();boot().then(()=>githubSync())}
+P.cfg(S);L.cfg(S);alInit();detectScreens();boot().then(()=>githubSync())}
 </script></body></html>
