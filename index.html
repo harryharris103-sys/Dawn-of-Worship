@@ -154,9 +154,23 @@
            ⬇ Export / ⬆ Import. The file carries your saved display templates plus your alert messages,
            tokens and appearance, and any imported fonts the templates use. Importing never overwrites: a
            template whose name is already taken is added as "Name (2)", identical ones are skipped.
+  v1.13.0 — (1) SCREENS: new "🖵 Screens" button (next to Open Output) shows how many screens are connected,
+           lists them with size and name, and lets you choose which one is the OUTPUT screen (congregation) and
+           which one is the STAGE screen (worship leader / speaker display). Identify flashes each screen's number
+           on that screen for a few seconds. Choices are remembered; "Automatic" still sends the Output to the
+           first other screen and the Stage to another free one. Open Output and Stage Display now open on the
+           screens you chose (the stage display goes fullscreen there by itself). Needs the browser's
+           "Window management" permission (Chrome / Edge, https); other browsers show a simple 1 / 2+ screen count.
+           (2) NIV and other Bibles are no longer bundled or auto-loaded — the app starts with no Bible and you
+           import your own .ewb / .json (a 🗑 button in the Bible tab now removes a version you no longer want).
+           (3) DEVELOPER FEATURES: the 🔄 GitHub sync button has moved out of the header into a password-protected
+           "Developer Features" dialog (link at the bottom of the right-hand panel). Sync, including automatic
+           sync at start-up, only runs once developer features are unlocked on that browser. Sync can now be
+           pointed at any GitHub repository (owner/name, folder, branch), so it works from Cloudflare Pages and
+           other hosts, not only github.io addresses.
   Bump DOW_VERSION below and add a new line here whenever a change ships.
 -->
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#1A1A1A"><title>DOW Software v1.12.0 — Dawn of Worship | Mega Tag Enterprise</title>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#1A1A1A"><title>DOW Software v1.13.0 — Dawn of Worship | Mega Tag Enterprise</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous"></script>
 <style>
 :root{--g:#C9932E;--d:#1A1A1A;--s:#666;--w:#fff;--bg:#101010;--l:#2a2a2a;--fg:#eee;--btn:#262626;--btnb:#3a3a3a}
@@ -173,6 +187,9 @@ button,select,input{background:var(--btn);color:var(--fg);border:1px solid var(-
 input[type=color]{padding:2px;height:30px;cursor:pointer}
 button{cursor:pointer}button:hover{border-color:var(--g)}button.go{background:var(--g);color:#000;font-weight:bold;border-color:var(--g)}
 .tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}.tabs button{flex:1 0 auto;padding:5px 6px}.tabs .on{background:var(--g);color:#000}
+.mdl{position:fixed;inset:0;background:#000b;z-index:80;display:grid;place-items:center;padding:16px}.mbox{background:var(--d);color:var(--fg);border:1px solid var(--g);border-radius:8px;max-width:600px;width:100%;max-height:88vh;overflow:auto;box-shadow:0 10px 40px #000}
+.mhd{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--l);color:var(--g);letter-spacing:2px;font-size:12px;text-transform:uppercase}.mhd x{cursor:pointer;color:#888;font-size:16px;letter-spacing:0}.mhd x:hover{color:#e55}
+.mbody{padding:12px 14px}.mbody label{display:block;color:#aaa;font-size:11px;margin:8px 0 2px}.mbody input[type=text],.mbody input[type=password]{width:100%}.scn{font-size:22px;font-weight:700;color:var(--g);margin-bottom:4px}
 .stabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}.stabs button{flex:1 0 auto;padding:5px 6px}.stabs .on{background:var(--g);color:#000}
 #alstrip{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin:6px 0 4px;padding:5px 6px;border:1px solid var(--l);border-radius:5px}#alstrip b{color:var(--g);font-size:11px;letter-spacing:2px}#alstrip select{max-width:120px}#alstrip input{width:112px}
 #alchips{flex-basis:100%;display:flex;flex-wrap:wrap;gap:4px;min-height:20px;align-items:center}#anch{margin:6px 0 2px}
@@ -208,12 +225,12 @@ details{margin-top:10px}summary{cursor:pointer;color:var(--g);font-size:11px;let
 body.out{background:#000;display:block}body.out .scr{position:fixed;inset:0;border:0;aspect-ratio:auto}body.out>:not(.scr){display:none}
 .mo{overflow:hidden}.st[data-fit=contain] .bg>*{object-fit:contain;background-size:contain;background-repeat:no-repeat}.st[data-fit=fill] .bg>*{object-fit:fill;background-size:100% 100%;background-repeat:no-repeat}
 </style></head><body>
-<header><b>MEGA TAG <i>ENTERPRISE</i></b><span>|</span><span>DOW Software · Dawn of Worship</span><span id="verbadge" style="color:var(--g);font-size:11px;letter-spacing:1px;border:1px solid var(--g);border-radius:3px;padding:1px 6px"></span><span id="netbadge" class="netb" title="Offline cache status"></span><small style="display:flex;align-items:center;gap:10px"><button id="gsync" title="Re-scan the GitHub folder for new Bible/song/media/PPTX files">🔄</button><button id="th" title="Toggle control-panel theme — projected output always stays black">🌓</button>Quality Goods &amp; Services</small></header>
+<header><b>MEGA TAG <i>ENTERPRISE</i></b><span>|</span><span>DOW Software · Dawn of Worship</span><span id="verbadge" style="color:var(--g);font-size:11px;letter-spacing:1px;border:1px solid var(--g);border-radius:3px;padding:1px 6px"></span><span id="netbadge" class="netb" title="Offline cache status"></span><small style="display:flex;align-items:center;gap:10px"><button id="th" title="Toggle control-panel theme — projected output always stays black">🌓</button>Quality Goods &amp; Services</small></header>
 <main>
 <section id="lib"><div class="tabs"></div><div id="pn"></div></section>
 <section><div id="qvbar"><b>QUICK VERSE</b><input id="qv" placeholder="book:chapter:verse — John:3:16 · Ps 23 · or words to find" autocomplete="off" spellcheck="false"><select id="qvv" title="Bible version" style="width:84px"></select><button id="qvg" title="Load into Preview (Enter)">Preview</button><button class="go" id="qvl" title="Load, take live and show on the output screen (Shift+Enter)">⚡ Project</button></div><div id="qvst"></div><div class="mons"><div><label>PREVIEW<span id=pvn class=nm></span></label><div class="scr" id="pv"></div></div><div class="live"><label>● LIVE<span id=lvn class=nm></span></label><div class="scr" id="lv"></div></div></div>
 <div class="ctl"><button id="pr">◀ Prev</button><button id="nx">Next ▶</button><button class="go" id="tk">TAKE LIVE ⏎</button><button id="bl">Blank (B)</button>
-<select id="tr"><option>fade</option><option>slide</option><option>zoom</option><option>cut</option></select><label><input type="checkbox" id="au"> Auto-take (D)</label><label style="margin-left:auto" title="When a second display is detected, send the output to it automatically the first time you take something live"><input type="checkbox" id="ao"> Auto-open on 2nd screen</label><button id="op" title="Opens on your second monitor/projector if one is connected, and goes fullscreen automatically — titled 'DOW Software — OUTPUT' for easy targeting in OBS (Display Capture if it fills a real second screen, or Window Capture by title otherwise)">🖥 Open Output</button><button id="opst" title="Opens the stage display: a second window for the worship leader or speaker (clock, live slide, next slide, foldback messages). Never shown to the congregation.">🎤 Stage Display</button><small id="os" style="flex-basis:100%;color:var(--s)"></small></div>
+<select id="tr"><option>fade</option><option>slide</option><option>zoom</option><option>cut</option></select><label><input type="checkbox" id="au"> Auto-take (D)</label><label style="margin-left:auto" title="When a second display is detected, send the output to it automatically the first time you take something live"><input type="checkbox" id="ao"> Auto-open on 2nd screen</label><button id="op" title="Opens on your second monitor/projector if one is connected, and goes fullscreen automatically — titled 'DOW Software — OUTPUT' for easy targeting in OBS (Display Capture if it fills a real second screen, or Window Capture by title otherwise)">🖥 Open Output</button><button id="opst" title="Opens the stage display: a second window for the worship leader or speaker (clock, live slide, next slide, foldback messages). Never shown to the congregation.">🎤 Stage Display</button><button id="scb" title="Find out how many screens are connected and choose the Output and Stage screens">🖵 Screens</button><small id="os" style="flex-basis:100%;color:var(--s)"></small></div>
 <div id="alstrip"><b>ALERTS</b><input id="aln" placeholder="👶 Nursery #" inputmode="numeric" autocomplete="off" title="Type a child number and press Enter (shortcut: N)"><button id="alna" title="Show this child number on the screen">Show</button><select id="alm" title="Saved messages"></select><button id="alms" title="Show the chosen message on the screen">💬 Show</button><select id="alf" title="Saved foldback messages"></select><button id="alfs" title="Send the chosen message to the stage display only">🎤 Stage</button><button id="alca" title="Remove every alert from the screens">■ Clear all</button><div id="alchips"></div></div>
 <h4>Slides <button id="ad" style="float:right;padding:1px 8px">＋ Dock</button></h4><div class="sls" id="sls"></div></section>
 <section><h4>Quick Dock</h4><div id="dk"></div>
@@ -224,10 +241,11 @@ body.out{background:#000;display:block}body.out .scr{position:fixed;inset:0;bord
 <div class=row><button id="tpex" style="flex:1" title="Save all your templates (display + alert messages, tokens, appearance) to a file">⬇ Export</button><button id="tpim" style="flex:1" title="Load a templates file from another device or browser — nothing is overwritten">⬆ Import</button><input id="tpif" type="file" accept=".json,.dowtpl" hidden></div>
 <div id="tpl"></div></div>
 </details>
-<p style="color:#777;font-size:11px">Keys: ← → navigate · Enter take · B blank · O open output · D auto-take · / or Ctrl+K quick verse · N nursery number<br>Quick verse: Enter = preview · Shift+Enter = straight to the output screen · ↑ ↓ change slide (Shift = live)<br>Output window: opens on the 2nd screen automatically. If it isn&#39;t fullscreen yet, click it once (or press F).</p></section>
+<p style="color:#777;font-size:11px">Keys: ← → navigate · Enter take · B blank · O open output · D auto-take · / or Ctrl+K quick verse · N nursery number<br>Quick verse: Enter = preview · Shift+Enter = straight to the output screen · ↑ ↓ change slide (Shift = live)<br>Output window: opens on the 2nd screen automatically. If it isn&#39;t fullscreen yet, click it once (or press F).</p>
+<p style="margin:6px 0 0"><a href="#" id="devl" style="color:#777;font-size:11px">🔒 Developer Features</a></p></section>
 </main>
 <script>
-const DOW_VERSION='1.12.0';
+const DOW_VERSION='1.13.0';
 // ---- song files: .txt (as-is) and .xml (OpenLyrics from OpenLP; basic OpenSong too) -> lyric text, blank line = new slide
 function decodeText(buf){const u=new Uint8Array(buf);let enc='utf-8';
  if(u[0]===0xFF&&u[1]===0xFE)enc='utf-16le';else if(u[0]===0xFE&&u[1]===0xFF)enc='utf-16be';
@@ -285,7 +303,7 @@ async function offlineRefresh(){
  try{if(navigator.storage){OFF.persisted=navigator.storage.persisted?await navigator.storage.persisted():null;const est=navigator.storage.estimate?await navigator.storage.estimate():null;OFF.usage=est&&est.usage!=null?est.usage:null}}catch(e){}
  if(!b)return;
  const on=navigator.onLine;let txt,cls,tip;
- if(!OFF.supported){txt='○ No offline copy';cls='';tip='Offline caching works when the app is opened from its web address (https, e.g. GitHub Pages) — not from a file on disk.'}
+ if(!OFF.supported){txt='○ No offline copy';cls='';tip='Offline caching works when the app is opened from its web address (an https address) — not from a file on disk.'}
  else if(!OFF.ready){txt=on?'… Saving offline copy':'📴 Offline';cls=on?'':'off';tip=on?'Saving the app for offline use — this takes a moment on the first visit.':'You are offline and no saved copy exists yet. Open the app once while online.'}
  else{txt=on?'⚡ Offline-ready':'📴 Offline';cls=on?'ok':'off';tip=on?'The app is saved on this computer and will open without internet.':'No internet — running from the saved copy. Bibles, songs, media, PPTX decks and templates are all stored locally.'}
  tip+='\n• PPTX import library: '+(OFF.lib?'saved ✔':'not saved yet — connect to the internet once to enable PPTX import offline');
@@ -300,7 +318,7 @@ if(OFF.supported){addEventListener('load',async()=>{
  offlineRefresh()})}
 addEventListener('online',offlineRefresh);addEventListener('offline',offlineRefresh);
 {const nb=document.getElementById('netbadge');if(nb)nb.onclick=async()=>{
- if(!OFF.supported){alert('Offline caching works when the app is opened from its web address (https, e.g. GitHub Pages) — not from a file on disk.');return}
+ if(!OFF.supported){alert('Offline caching works when the app is opened from its web address (an https address) — not from a file on disk.');return}
  if(!navigator.onLine){alert('You are offline — connect to the internet to refresh the offline copy.');return}
  if(!confirm('Refresh the offline copy now?\n\nThis re-saves the app on this computer. Your Bibles, songs, media, PPTX decks, fonts and templates are NOT affected.'))return;
  try{for(const r of await navigator.serviceWorker.getRegistrations())await r.unregister();for(const k of await caches.keys())if(k.startsWith('dow-'))await caches.delete(k)}catch(e){}
@@ -506,6 +524,7 @@ const drawS=()=>{const now=Date.now(),A=SG.al,toks=A?A.tok:[];
 if(!('BroadcastChannel'in window)){g('sgx').textContent='This browser cannot run the stage display (it needs BroadcastChannel). Use a current Chrome, Edge, Firefox or Safari.'}
 else{const b=new BroadcastChannel('dow-live');b.onmessage=e=>{const d=e.data||{};if('al'in d)SG.al=d.al;if('stage'in d&&d.stage)SG.st=d.stage;drawS()};b.postMessage({hello:'stage'})}
 const fsS=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{});
+addEventListener('message',e=>{if(e.data&&e.data.fs&&!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>{})});if(opener)opener.postMessage({sready:1},'*');
 addEventListener('dblclick',fsS);addEventListener('keydown',e=>{if(e.key=='f'||e.key=='F')fsS()});
 document.addEventListener('fullscreenchange',()=>{g('sgh').style.display=document.fullscreenElement?'none':''});
 addEventListener('resize',()=>{lastCur=null;drawS()});setInterval(drawS,1000);drawS()}
@@ -708,7 +727,7 @@ async function parsePptx(file){
 
 const pv={sl:null,bg:null},lv={sl:null,bg:null};
 const send=m=>{try{win&&!win.closed&&win.postMessage(m,'*')}catch(e){}};
-addEventListener('message',e=>{if(e.data?.ready){send({s:S,sl:lv.sl,bg:lv.bg,tr:'cut',fontsCSS:fontsCSS()});camPush();alSend();try{win&&!win.closed&&win.postMessage({fs:1},{targetOrigin:'*',delegate:'fullscreen'})}catch(err){try{win.postMessage({fs:1},'*')}catch(e2){}}}});
+addEventListener('message',e=>{if(e.data?.sready){if(stageFS&&swin&&!swin.closed){try{swin.postMessage({fs:1},{targetOrigin:'*',delegate:'fullscreen'})}catch(err){try{swin.postMessage({fs:1},'*')}catch(e2){}}}return}if(e.data?.ready){send({s:S,sl:lv.sl,bg:lv.bg,tr:'cut',fontsCSS:fontsCSS()});camPush();alSend();try{win&&!win.closed&&win.postMessage({fs:1},{targetOrigin:'*',delegate:'fullscreen'})}catch(err){try{win.postMessage({fs:1},'*')}catch(e2){}}}});
 const url=m=>m.u||(m.u=URL.createObjectURL(m.blob));
 const applyS=()=>{localStorage.setItem('dow.s',JSON.stringify(S));P.cfg(S);L.cfg(S);send({s:S,fontsCSS:fontsCSS()})};
 function take(){if(!pv.sl&&!pv.bg)return;lv.sl=pv.sl;lv.bg=pv.bg;L.setBg(lv.bg);L.show(lv.sl,S.tr);send({bg:lv.bg,sl:lv.sl,tr:S.tr});draw();if($('#ao').checked&&(!win||win.closed))openOut(true)}
@@ -806,9 +825,9 @@ function song(n){const s=songs[n];if(s)load(s.text.replace(/\r/g,'').trim().spli
 // Library panels
 function panel(){const p=$('#pn');$('.tabs').innerHTML=['Bible','Songs','Media','PPTX','Online','Camera','Export','Alerts'].map(t=>`<button class="${t==tab?'on':''}" data-t="${t}">${t}</button>`).join('');
  if(tab=='Bible'){const vk=Object.keys(bibles);
-  if(!vk.length){p.innerHTML=`<div class=row><button onclick="$('#bf').click()">Import Bible (.json / .ewb)</button><input id=bf type=file accept=".json,.ewb" multiple hidden></div><small style="color:#888">No Bible version loaded yet — import one to begin.</small>`;
+  if(!vk.length){p.innerHTML=`<div class=row><button onclick="$('#bf').click()">Import Bible (.json / .ewb)</button><input id=bf type=file accept=".json,.ewb" multiple hidden></div><small style="color:#888">No Bible loaded yet. Bibles are not included with the app — press Import and choose your own .ewb or .json file.</small>`;
    $('#bf').onchange=e=>importBibleFiles(e.target.files);return}
-  p.innerHTML=`<div class=row><select id=bv style="flex:1">${vk.map(v=>`<option ${v==ver?'selected':''}>${esc(v)}</option>`).join('')}</select><button onclick="$('#bf').click()">Import .json / .ewb</button><input id=bf type=file accept=".json,.ewb" multiple hidden></div>
+  p.innerHTML=`<div class=row><select id=bv style="flex:1">${vk.map(v=>`<option ${v==ver?'selected':''}>${esc(v)}</option>`).join('')}</select><button onclick="$('#bf').click()">Import .json / .ewb</button><button id=bdl title="Remove the selected Bible version from this browser (you can import it again later)">🗑</button><input id=bf type=file accept=".json,.ewb" multiple hidden></div>
   <div class=row><input id=bsq placeholder="🔍 Find verses by a word or phrase" autocomplete=off spellcheck=false><button id=bsx title="Clear search" style="display:none">✕</button></div><div id=bsr></div>
   <div class=row><select id=bb style="flex:2"></select><select id=bc style="width:66px"></select></div>
   <div class=row><input id=bva type=number min=1 placeholder="verse a" style="width:0;flex:1"><span style="align-self:center;color:#999">to</span><input id=bvb type=number min=1 placeholder="verse b" style="width:0;flex:1"></div>
@@ -819,6 +838,7 @@ function panel(){const p=$('#pn');$('.tabs').innerHTML=['Bible','Songs','Media',
    $('#bb').innerHTML=(ot.length?`<optgroup label="Old Testament">${opt(ot)}</optgroup>`:'')+(nt.length?`<optgroup label="New Testament">${opt(nt)}</optgroup>`:'')||opt(ks);fillChapters()};
   const fillChapters=()=>{const B=bibles[ver]||{},bk=$('#bb').value,ch=B[bk]?Object.keys(B[bk]).map(Number).sort((a,b)=>a-b):[];$('#bc').innerHTML=ch.map(c=>`<option>${c}</option>`).join('')};
   fillBooks();$('#bf').onchange=e=>importBibleFiles(e.target.files);
+  $('#bdl').onclick=async()=>{if(!ver)return;if(!confirm('Remove the Bible version “'+ver+'” from this browser?\n\nYou can import it again later.'))return;await del('bible',ver);delete bibles[ver];ver=Object.keys(bibles)[0]||'';await boot()};
   $('#bv').onchange=e=>{ver=e.target.value;fillBooks();syncQV();bibleResults()};$('#bb').onchange=fillChapters;
   $('#bsq').value=bQ;$('#bsq').oninput=()=>{bQ=$('#bsq').value;clearTimeout(bT);bT=setTimeout(bibleResults,180)};$('#bsq').onkeydown=e=>{if(e.key=='Enter'){e.preventDefault();clearTimeout(bT);bibleResults()}else if(e.key=='Escape'){bQ='';$('#bsq').value='';bibleResults()}};$('#bsx').onclick=()=>{bQ='';$('#bsq').value='';bibleResults();$('#bsq').focus()};bibleResults();
   const go=()=>{const bk=$('#bb').value,c=$('#bc').value,a=$('#bva').value.trim(),z=$('#bvb').value.trim();if(!bk||!c)return;bible(`${bk} ${c}${a?':'+a+(z&&z!=a?'-'+z:''):''}`)};
@@ -869,21 +889,17 @@ function panel(){const p=$('#pn');$('.tabs').innerHTML=['Bible','Songs','Media',
   $('#pf').onchange=async e=>{if(typeof JSZip=='undefined'){alert('PPTX support needs an internet connection the first time (to load the unzip library). Try again while online.');e.target.value='';return}for(const f of e.target.files){try{const sl2=await parsePptx(f);if(sl2.length)await put('pptx',{name:f.name.replace(/\.pptx$/i,''),slides:sl2,file:f});else alert(f.name+': no slides found in this presentation.')}catch(err){console.error(err);alert('Could not read '+f.name+' — is it a valid .pptx file?')}}await boot()}}}
 let bibleSrc={};
 async function boot(){bibles={};bibleSrc={};(await all('bible')).forEach(b=>{bibles[b.name]=b.data;bibleSrc[b.name]={src:b.src||'',file:b.file||''}});
- if(!Object.keys(bibles).length){let d2=null,nm=null,src='json',file='niv.json';
-  try{const r=await fetch('niv.ewb');if(r.ok){const e=await parseEwb(await r.arrayBuffer());d2=e.data;nm=e.name;src='ewb';file='niv.ewb'}}catch(e){}
-  if(!d2){try{const r=await fetch('niv.json');if(r.ok){const x=normalizeBible(await r.json());d2=x.data;nm=x.name}}catch(e){}}
-  if(d2){const n=(nm||'NIV').toUpperCase();await put('bible',{name:n,data:d2,src,file});bibles[n]=d2;bibleSrc[n]={src,file}}}
  songs={};(await all('song')).forEach(s=>songs[s.name]=s);media={};(await all('media')).forEach(m=>media[m.name]=m);pptxs={};(await all('pptx')).forEach(p=>pptxs[p.name]=p);
  customFonts={};(await all('font')).forEach(f=>customFonts[f.name]=f.data);injectFonts();renderFontSelect();
  if(!bibles[ver])ver=Object.keys(bibles)[0]||'';syncQV();if(!(tab=='Songs'&&editing&&$('#stx')))panel();draw()}
 // ---------- GitHub folder auto-discovery ----------
-async function githubSync(){const btn=$('#gsync');try{if(btn){btn.disabled=true;btn.textContent='⏳'}
- const host=location.hostname;if(!host.endsWith('.github.io'))return;
- const owner=host.split('.')[0],segs=location.pathname.split('/').filter(Boolean);
- const cands=[];if(segs.length)cands.push({repo:segs[0],dir:segs.slice(1,-1).join('/')});
- cands.push({repo:owner+'.github.io',dir:segs.slice(0,-1).join('/')});
- let files=null;for(const c of cands){try{const r=await fetch(`https://api.github.com/repos/${owner}/${c.repo}/contents/${c.dir}`);if(r.ok){const j=await r.json();if(Array.isArray(j)){files=j;break}}}catch(e){}}
- if(!files)return;
+async function githubSync(manual){if(!devOn())return;const btn=$('#ghgo');let lastStatus=0;try{ghNote('⏳ Checking the repository…');if(btn)btn.disabled=true;
+ const host=location.hostname,segs=location.pathname.split('/').filter(Boolean),cands=[];
+ if(GH.repo&&/^[\w.-]+\/[\w.-]+$/.test(GH.repo)){const[o,r]=GH.repo.split('/');cands.push({owner:o,repo:r,dir:(GH.dir||'').replace(/^\/+|\/+$/g,'')})}
+ else if(host.endsWith('.github.io')){const owner=host.split('.')[0];if(segs.length)cands.push({owner,repo:segs[0],dir:segs.slice(1,-1).join('/')});cands.push({owner,repo:owner+'.github.io',dir:segs.slice(0,-1).join('/')})}
+ if(!cands.length){ghNote('This is not a github.io address — enter the repository (owner/name) above, then press Sync now.');return}
+ let files=null,used=null;for(const c of cands){try{const r=await fetch(`https://api.github.com/repos/${c.owner}/${c.repo}/contents/${c.dir}${GH.branch?'?ref='+encodeURIComponent(GH.branch):''}`);if(r.ok){const j=await r.json();if(Array.isArray(j)){files=j;used=c;break}}else lastStatus=r.status}catch(e){}}
+ if(!files){ghNote('Could not read the repository'+(lastStatus==403?' (GitHub rate limit — wait a few minutes and try again)':lastStatus==404?' (not found — check owner/name, folder and branch; a private repository cannot be read)':'')+'.');return}
  const ewbBases=new Set(files.filter(f=>f.type==='file'&&/\.ewb$/i.test(f.name)).map(f=>f.name.replace(/\.ewb$/i,'').toUpperCase())),haveFile=new Set(Object.values(bibleSrc).filter(x=>x.src==='ewb'&&x.file).map(x=>x.file)),isEw=n=>(bibleSrc[n]||{}).src==='ewb';
  const haveB=new Set(Object.keys(bibles)),haveS=new Set(Object.keys(songs)),haveM=new Set(Object.keys(media)),haveSF=new Set(Object.values(songs).map(x=>x.file).filter(Boolean)),haveP=new Set(Object.keys(pptxs).filter(n=>(pptxs[n].slides[0]||{}).v>=2));
  for(const f of files){if(f.type!=='file')continue;const name=f.name,low=name.toLowerCase();
@@ -903,7 +919,7 @@ async function githubSync(){const btn=$('#gsync');try{if(btn){btn.disabled=true;
   else if(low.endsWith('.xml')){if(haveSF.has(name))continue;      // already imported from this file
    try{const sg=xmlSong(decodeText(await(await fetch(f.download_url)).arrayBuffer()),name.replace(/\.xml$/i,''));if(haveS.has(sg.name))continue;   // same title already saved (maybe edited) — leave it alone
     await put('song',{name:sg.name,text:sg.text,file:name});haveS.add(sg.name);haveSF.add(name)}catch(e){}}}
- await boot()}catch(e){console.error('GitHub sync failed',e)}finally{if(btn){btn.disabled=false;btn.textContent='🔄'}}}
+ await boot();ghNote('✓ Checked '+files.length+' item'+(files.length==1?'':'s')+' in '+used.owner+'/'+used.repo+(used.dir?'/'+used.dir:'')+' — anything new was imported.')}catch(e){console.error('GitHub sync failed',e);ghNote('⚠ Sync failed: '+((e&&e.message)||e))}finally{const b=$('#ghgo');if(b)b.disabled=false}}
 // ---------- Live video source: camera / capture card (v1.10.0) ----------
 let camDevs={v:[],a:[]},camNote='',camListed=false;
 const camPref=(()=>{try{return JSON.parse(localStorage.getItem('dow.cam')||'{}')}catch(e){return{}}})();
@@ -1154,10 +1170,13 @@ function alCleanTok(t){if(!t||typeof t!=='object')return null;const name=String(
  return o}
 // --- stage display window
 let swin=null;
-function openStage(){if(!bc){osSet('⚠ The stage display needs a current browser (Chrome, Edge, Firefox or Safari).');return}
- swin=open(location.pathname+'#stage','dow-stage','popup=yes,width=1100,height=640');
+async function openStage(){if(!bc){osSet('⚠ The stage display needs a current browser (Chrome, Edge, Firefox or Safari).');return}
+ const r=await pickScreen('stage'),sc=r.sc;let f='popup=yes,width=1100,height=640';if(sc)f=`popup=yes,left=${sc.availLeft},top=${sc.availTop},width=${sc.availWidth},height=${sc.availHeight}`;
+ swin=open(location.pathname+'#stage','dow-stage',f);
  if(!swin){osSet('⚠ Pop-up blocked — allow pop-ups for this site, then press 🎤 Stage again.');return}
- osSet('✓ Stage display opened — drag it to the stage monitor, then double-click it (or press F) for fullscreen.');setTimeout(alSend,700)}
+ if(sc){try{swin.moveTo(sc.availLeft,sc.availTop);swin.resizeTo(sc.availWidth,sc.availHeight)}catch(e){}}
+ stageFS=!!sc;osSet(sc?'✓ Stage display sent to “'+(r.assigned||r.auto||'another screen')+'”.':'✓ Stage display opened on this screen — choose a Stage screen in 🖵 Screens, or drag it to the stage monitor and double-click it (or press F) for fullscreen.');
+ setTimeout(alSend,700)}
 // --- quick strip (always visible under the controls)
 function alUI(){const a=$('#alm');if(!a)return;
  const keep=(s,i)=>{const v=s.value;s.innerHTML=i;if([...s.options].some(o=>o.value===v))s.value=v};
@@ -1305,8 +1324,89 @@ function alInit(){
  $('#alca').onclick=alClearAll;
  $('#alchips').onclick=e=>{const x=e.target.closest('[data-cx],[data-cn]');if(!x)return;if(x.dataset.cn!==undefined)alDelNur(x.dataset.cn);else if(x.dataset.cx=='msg'){AS.auto.on&&AS.msg&&AS.msg.auto?alAutoStop():alClearMsg()}else if(x.dataset.cx=='fold')alClearFold();else if(x.dataset.cx=='auto')alAutoStop()};
  $('#tpex').onclick=tplExport;$('#tpim').onclick=()=>$('#tpif').click();$('#tpif').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(f)await tplImport(f)};
- $('#opst').onclick=openStage;
+ $('#opst').onclick=openStage;$('#scb').onclick=openScreens;$('#devl').onclick=e=>{e.preventDefault();openDev()};
  setInterval(alTick,1000);alUI();L.setAlerts(alSnap())}
+// ---------- small pop-up dialog used by Screens and Developer Features (v1.13.0) ----------
+function closeModal(id){const m=document.getElementById(id);if(m)m.remove()}
+function modal(id,title,html){closeModal(id);const m=document.createElement('div');m.className='mdl';m.id=id;
+ m.innerHTML=`<div class=mbox><div class=mhd><span>${title}</span><x id=mdx title="Close">✕</x></div><div class=mbody>${html}</div></div>`;
+ document.body.append(m);m.onclick=e=>{if(e.target===m)closeModal(id)};m.querySelector('#mdx').onclick=()=>closeModal(id);return m}
+addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.mdl').forEach(m=>m.remove())});
+
+// ---------- Screens (v1.13.0): how many are connected · which one is the Output · which one is the Stage ----------
+// Uses the browser's Window Management API (Chrome / Edge over https). Choices are remembered by each screen's position + size.
+const SCRC=(()=>{try{return JSON.parse(localStorage.getItem('dow.scr')||'{}')||{}}catch(e){return{}}})();   // {out:{key,label}, stage:{key,label}}
+const SCR={list:[],details:null,err:''};let stageFS=false;
+const scrKey=s=>s.left+','+s.top+','+s.width+'x'+s.height,scrSave=()=>localStorage.setItem('dow.scr',JSON.stringify(SCRC));
+function scrFind(a){if(!a||!SCR.list.length)return null;const k=SCR.list.find(s=>s.key===a.key);if(k)return k;const m=SCR.list.filter(s=>s.label===a.label);return m.length===1?m[0]:null}
+function scrSet(d){SCR.details=d;SCR.err='';
+ SCR.list=d.screens.map((s,i)=>({i,raw:s,key:scrKey(s),label:String(s.label||'').trim()||('Screen '+(i+1)),w:s.width,h:s.height,primary:!!s.isPrimary,internal:!!s.isInternal,cur:s===d.currentScreen}));
+ if(!d.__dow){d.__dow=1;const f=()=>scrSet(d);d.addEventListener('screenschange',f);d.addEventListener('currentscreenchange',f)}scrUI()}
+async function scrScan(){if(!('getScreenDetails'in window)){SCR.err='unsupported';scrUI();return false}
+ try{scrSet(await getScreenDetails());return true}catch(e){SCR.err=(e&&e.name)||'error';scrUI();return false}}
+// which screen a window should open on: the one you chose, else automatic
+async function pickScreen(role){const r=await secondScreen();   // also refreshes the list above
+ const s=scrFind(SCRC[role==='out'?'out':'stage']);if(s)return{sc:s.raw,multi:true,assigned:s.label};
+ if(role==='stage'){const o=scrFind(SCRC.out),ot=o?o.raw:(r.multi?r.sc:null),c=SCR.list.find(x=>!x.cur&&x.raw!==ot);return c?{sc:c.raw,multi:true,auto:c.label}:{sc:null,multi:false}}
+ return r}
+function scrIdentify(s){const r=s.raw,w=open('','dow-id'+s.i,`popup=yes,left=${r.availLeft+60},top=${r.availTop+60},width=460,height=300`);
+ if(!w){osSet('⚠ Pop-up blocked — allow pop-ups for this site, then press Identify again.');return false}
+ const o=scrFind(SCRC.out)===s,g=scrFind(SCRC.stage)===s,role=[o?'OUTPUT':'',g?'STAGE':''].filter(Boolean).join(' + ');
+ w.document.write(`<title>Screen ${s.i+1}</title><body style="margin:0;background:#101010;color:#fff;font-family:Arial,sans-serif;display:grid;place-items:center;height:100vh;text-align:center"><div><div style="font-size:150px;font-weight:700;color:#C9932E;line-height:1">${s.i+1}</div><div style="font-size:22px;margin-top:8px">${esc(s.label)}</div><div style="font-size:16px;color:#aaa;margin-top:4px">${s.w}×${s.h}${role?' · '+role:''}</div></div></body>`);
+ w.document.close();setTimeout(()=>{try{w.close()}catch(e){}},3500);return true}
+function scrUI(){const b=$('#scb');
+ if(b){const n=SCR.list.length;b.textContent=n?'🖵 '+n+' screen'+(n==1?'':'s'):('getScreenDetails'in window)?'🖵 Screens':(screen.isExtended===true?'🖵 2+ screens':'🖵 1 screen');
+  b.title=n?SCR.list.map(s=>(s.i+1)+'. '+s.label+'  '+s.w+'×'+s.h).join('\n'):'Find out how many screens are connected and choose the Output and Stage screens'}
+ if(document.getElementById('scm'))scrBody()}
+function scrBody(){const m=document.getElementById('scm');if(!m)return;const n=SCR.list.length,sup='getScreenDetails'in window,o=scrFind(SCRC.out),g=scrFind(SCRC.stage);let h='';
+ if(n)h+=`<div class=scn>${n} screen${n==1?'':'s'} connected</div>`;
+ else if(!sup)h+=`<div class=scn>${screen.isExtended===true?'2 or more screens':'1 screen'}</div><small style="color:#888">This browser can't list individual screens or place windows on them (it needs Chrome or Edge over an https address). Open the Output and Stage windows and drag each one to its screen yourself.</small>`;
+ else h+=`<div class=scn>Screens not detected yet</div><small style="color:#${SCR.err==='NotAllowedError'?'e55':'888'}">${SCR.err==='NotAllowedError'?'⚠ Access was blocked — click the lock icon in the address bar, allow “Window management”, then press Detect screens again.':SCR.err?'⚠ Could not check ('+esc(SCR.err)+').':'Press <b>Detect screens</b> and click Allow, so the app can see how many screens are connected.'}</small>`;
+ h+=`<div class=row style="margin:8px 0"><button id=scd class=go>🔍 Detect screens</button>${n?'<button id=sci>Identify all</button>':''}</div>`;
+ if(n){h+=SCR.list.map(s=>`<div class=it style="cursor:default"><span style="min-width:0"><b>${s.i+1}</b> · ${esc(s.label)} <small style="color:#888">${s.w}×${s.h}${s.primary?' · primary':''}${s.internal?' · built-in':''}${s.cur?' · this window':''}</small> ${o===s?'<span class=chip>OUTPUT</span>':''}${g===s?'<span class=chip>STAGE</span>':''}</span><button data-sid="${s.i}" title="Show this screen's number on it for a few seconds">Identify</button></div>`).join('');
+  const opts=a=>'<option value="">Automatic</option>'+SCR.list.map(s=>`<option value="${s.i}"${scrFind(a)===s?' selected':''}>${s.i+1} · ${esc(s.label)} (${s.w}×${s.h})</option>`).join('');
+  h+=`<label>OUTPUT screen — what the congregation sees</label><select id=sco style="width:100%">${opts(SCRC.out)}</select><label>STAGE screen — the worship leader / speaker display</label><select id=scg style="width:100%">${opts(SCRC.stage)}</select>`;
+  const w=[];if(SCRC.out&&!o)w.push('⚠ The saved Output screen “'+esc(SCRC.out.label)+'” is not connected — Automatic is used.');if(SCRC.stage&&!g)w.push('⚠ The saved Stage screen “'+esc(SCRC.stage.label)+'” is not connected — Automatic is used.');
+  if(o&&g&&o===g)w.push('⚠ Output and Stage are set to the same screen — the stage display would cover what the congregation sees.');
+  if(n===1)w.push('Only one screen is connected, so both windows will open on it.');
+  h+=`<small id=scw style="display:block;color:#e8a;margin-top:6px">${w.join('<br>')}</small><small style="color:#888;display:block;margin-top:6px"><b>Automatic</b> sends the Output to the first screen that is not this window's, and the Stage to another remaining screen, if there is one.</small>`;
+  h+=`<div class=row style="margin-top:10px"><button id=sco2 style="flex:1">🖥 Open Output</button><button id=scg2 style="flex:1">🎤 Open Stage Display</button></div>`}
+ m.querySelector('.mbody').innerHTML=h;
+ const q=s=>m.querySelector(s);q('#scd').onclick=async()=>{q('#scd').disabled=true;await scrScan();scrBody()};
+ if(n){q('#sci').onclick=async()=>{let bad=0;for(const s of SCR.list){if(!scrIdentify(s))bad++;await new Promise(r=>setTimeout(r,200))}if(bad)q('#scw').textContent='⚠ Your browser allowed only some pop-ups at once — use the Identify button on each screen instead.'};
+  m.querySelectorAll('[data-sid]').forEach(b=>b.onclick=()=>scrIdentify(SCR.list[+b.dataset.sid]));
+  const pick=(k,v)=>{const s=v===''?null:SCR.list[+v];SCRC[k]=s?{key:s.key,label:s.label}:null;scrSave();scrBody()};
+  q('#sco').onchange=e=>pick('out',e.target.value);q('#scg').onchange=e=>pick('stage',e.target.value);
+  q('#sco2').onclick=()=>openOut(false);q('#scg2').onclick=()=>openStage()}}
+function openScreens(){modal('scm','🖵 Screens','');scrBody();if(!SCR.list.length&&'getScreenDetails'in window){navigator.permissions&&navigator.permissions.query({name:'window-management'}).then(p=>{if(p.state==='granted')scrScan().then(scrBody)}).catch(()=>{})}}
+
+// ---------- Developer features (v1.13.0): GitHub library sync, behind a password ----------
+// NOTE: this lock only keeps the feature out of everyday view. The page's code is public, so it is not real security.
+const DEV_SALT='dow|mte|devgate|1|',DEV_HASH='03f8bd35b97872b814213b560d2c8deaee47977768f634d95a6bbc4525f9bc37';
+const devOn=()=>localStorage.getItem('dow.dev')==='1';
+const GH=(()=>{try{return JSON.parse(localStorage.getItem('dow.gh')||'{}')||{}}catch(e){return{}}})();   // {repo:'owner/name', dir:'', branch:'', auto:true}
+const ghSave=()=>localStorage.setItem('dow.gh',JSON.stringify(GH));let ghLast='';
+const ghNote=m=>{ghLast=m||'';const e=$('#ghmsg');if(e)e.textContent=ghLast};
+async function sha256hex(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+function openDev(){devOn()?devPanel():devLogin()}
+function devLogin(){const m=modal('devm','🔒 Developer Features',`<small style="color:#888">Enter the developer password to continue.</small><div class=row style="margin-top:8px"><input id=devpw type=password placeholder="Password" autocomplete=off style="flex:1"><button class=go id=devgo>Unlock</button></div><small id=devmsg style="color:#e55;display:block;margin-top:6px"></small>`);
+ const go=async()=>{const v=m.querySelector('#devpw').value.trim().toLowerCase(),msg=m.querySelector('#devmsg');
+  if(!(window.crypto&&crypto.subtle)){msg.textContent='This needs a secure (https) address.';return}
+  await new Promise(r=>setTimeout(r,600));
+  if(await sha256hex(DEV_SALT+v)===DEV_HASH){localStorage.setItem('dow.dev','1');devPanel()}else{msg.textContent='Incorrect password.';m.querySelector('#devpw').select()}};
+ m.querySelector('#devgo').onclick=go;m.querySelector('#devpw').onkeydown=e=>{if(e.key==='Enter')go()};m.querySelector('#devpw').focus()}
+function devPanel(){const host=location.hostname,gh=host.endsWith('.github.io');
+ const m=modal('devm','🛠 Developer Features',`<h4>GitHub library sync</h4>
+ <small style="color:#888;display:block;margin-bottom:6px">Copies the Bible, song, media and PPTX files that sit in a GitHub repository into this browser. ${gh?'This is a github.io address, so the repository is found automatically — leave the box empty unless it is a different one.':'This address (<b>'+esc(host)+'</b>) is not a github.io address, so enter the repository the files come from.'}</small>
+ <label>Repository (owner/name)</label><input id=ghr type=text placeholder="e.g. mycompany/dow-library" value="${ea(GH.repo||'')}" style="width:100%">
+ <div class=f><label>Folder (optional)<input id=ghd type=text placeholder="e.g. library" value="${ea(GH.dir||'')}"></label><label>Branch (optional)<input id=ghb type=text placeholder="default branch" value="${ea(GH.branch||'')}"></label></div>
+ <label style="display:flex;gap:6px;align-items:center"><input type=checkbox id=gha${GH.auto!==false?' checked':''}> Sync automatically when the app starts</label>
+ <div class=row style="margin-top:8px"><button class=go id=ghgo style="flex:1">🔄 Sync now</button></div><small id=ghmsg style="display:block;margin-top:4px;color:var(--s)">${esc(ghLast)}</small>
+ <h4 style="margin-top:14px">Access</h4><div class=row><button id=devlock style="flex:1">🔒 Lock developer features</button></div>`);
+ const rd=()=>{GH.repo=m.querySelector('#ghr').value.trim().replace(/^https?:\/\/github\.com\//i,'').replace(/\.git$/i,'').replace(/\/+$/,'');GH.dir=m.querySelector('#ghd').value.trim();GH.branch=m.querySelector('#ghb').value.trim();GH.auto=m.querySelector('#gha').checked;ghSave()};
+ ['#ghr','#ghd','#ghb'].forEach(s=>m.querySelector(s).onchange=rd);m.querySelector('#gha').onchange=rd;
+ m.querySelector('#ghgo').onclick=()=>{rd();githubSync(true)};
+ m.querySelector('#devlock').onclick=()=>{localStorage.removeItem('dow.dev');closeModal('devm')}}
 // events
 document.addEventListener('click',e=>{const t=e.target,g=a=>t.closest(`[${a}]`)?.getAttribute(a);
  if(g('data-t')){tab=g('data-t');panel()}else if(t.dataset.ds){if(confirm('Delete "'+t.dataset.ds+'"?'))del('song',t.dataset.ds).then(boot)}else if(t.dataset.es){editSong(t.dataset.es)}else if(g('data-s')!==null&&g('data-s')!==undefined){song(g('data-s'));const ms=g('data-ms');if(ms!=null)pick(+ms)}
@@ -1325,19 +1425,19 @@ addEventListener('keydown',e=>{
 let opening=false,scInfo={n:0,err:''};
 const osSet=m=>{const e=$('#os');if(e)e.textContent=m||''};
 async function secondScreen(){
- try{const d=await getScreenDetails();scInfo={n:d.screens.length,err:''};const t=d.screens.find(x=>x!==d.currentScreen&&!x.isPrimary)||d.screens.find(x=>x!==d.currentScreen);
+ try{const d=await getScreenDetails();scInfo={n:d.screens.length,err:''};scrSet(d);const t=d.screens.find(x=>x!==d.currentScreen&&!x.isPrimary)||d.screens.find(x=>x!==d.currentScreen);
   return t?{sc:t,multi:true}:{sc:d.screens[0]||null,multi:false}}catch(e){scInfo={n:0,err:(e&&e.name)||'error'}}
  if(screen.isExtended===true)return{sc:{availLeft:(screen.availLeft||0)+screen.width,availTop:screen.availTop||0,availWidth:screen.availWidth,availHeight:screen.availHeight},multi:true,guess:true};
  return{sc:null,multi:false}}
 async function openOut(auto){if(opening)return;opening=true;try{
- const r=await secondScreen();
+ const r=await pickScreen('out');
  if(auto===true&&!r.multi){osSet(scInfo.err?'⚠ Could not check for a 2nd screen ('+scInfo.err+'). Allow "Window management" for this site (lock icon → Site settings), or press 🖥 Open Output.':'Only one screen found — press 🖥 Open Output if you want the output window anyway.');return}
  let f='popup=yes,width=1280,height=720';const sc=r.sc;if(sc)f=`popup=yes,left=${sc.availLeft},top=${sc.availTop},width=${sc.availWidth},height=${sc.availHeight}`;
  win=open(location.pathname+'#out','dow-out',f);
- if(win){setTimeout(()=>{send({s:S,sl:lv.sl,bg:lv.bg,tr:'cut',fontsCSS:fontsCSS()});camPush();alSend()},800);osSet(r.multi?'✓ Output sent to the 2nd screen'+(r.guess?' (position guessed)':''):'Output opened — no 2nd screen found, so it is on this screen.')}
+ if(win){setTimeout(()=>{send({s:S,sl:lv.sl,bg:lv.bg,tr:'cut',fontsCSS:fontsCSS()});camPush();alSend()},800);osSet(r.assigned?'✓ Output sent to “'+r.assigned+'”.':r.multi?'✓ Output sent to the 2nd screen'+(r.guess?' (position guessed)':''):'Output opened — no 2nd screen found, so it is on this screen.')}
  else osSet('⚠ Pop-up blocked — allow pop-ups for this site (icon in the address bar), then press 🖥 Open Output.')}finally{opening=false}}
-async function detectScreens(){try{let st='unknown';for(const nm of['window-management','window-placement']){try{st=(await navigator.permissions.query({name:nm})).state;break}catch(e){}}
- if(st==='granted'){const r=await secondScreen();osSet(r.multi?'✓ 2nd screen detected — TAKE LIVE will open the output on it.':'Only one screen detected right now.')}
+async function detectScreens(){scrUI();try{let st='unknown';for(const nm of['window-management','window-placement']){try{st=(await navigator.permissions.query({name:nm})).state;break}catch(e){}}
+ if(st==='granted'){const r=await secondScreen();osSet(SCR.list.length>1?'✓ '+SCR.list.length+' screens detected — press 🖵 Screens to choose the Output and Stage screens.':'Only one screen detected right now.')}
  else if(st==='prompt')osSet('Press 🖥 Open Output once and click Allow, so the app can find your 2nd screen.');
  else if(st==='denied')osSet('⚠ 2nd-screen detection is blocked for this site — allow "Window management" in the site permissions (lock icon).')}catch(e){}}
 $('#ao').checked=localStorage.getItem('dow.ao')!=='0';$('#ao').onchange=e=>localStorage.setItem('dow.ao',e.target.checked?'1':'0');
@@ -1359,6 +1459,5 @@ $('#tpsv').onclick=()=>{const n=$('#tpn').value.trim();if(!n)return;templates[n]
 const setTheme=t=>{document.body.classList.toggle('light',t=='light');localStorage.setItem('dow.theme',t)};
 setTheme(localStorage.getItem('dow.theme')||'dark');
 $('#th').onclick=()=>setTheme(document.body.classList.contains('light')?'dark':'light');
-$('#gsync').onclick=()=>githubSync();
-P.cfg(S);L.cfg(S);alInit();detectScreens();boot().then(()=>githubSync())}
+P.cfg(S);L.cfg(S);alInit();detectScreens();boot().then(()=>{if(devOn()&&GH.auto!==false)githubSync()})}
 </script></body></html>
